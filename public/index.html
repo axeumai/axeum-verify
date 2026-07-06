@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Receipt Verification — Axeum Technologies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --copper: #C49A6C;
+      --amber:  #D4A04A;
+      --obsidian: #1A1A1A;
+      --ivory: #FAF8F5;
+      --green: #4A7C59;
+      --dim: rgba(250,248,245,0.45);
+      --border: rgba(196,154,108,0.2);
+    }
+
+    body {
+      background: var(--obsidian);
+      color: var(--ivory);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top rule ── */
+    .top-rule {
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--copper) 20%, var(--amber) 50%, var(--copper) 80%, transparent);
+      flex-shrink: 0;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 48px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      font-weight: 300;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--copper);
+      text-decoration: none;
+    }
+
+    .header-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 72px 48px 56px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(196,154,108,0.6);
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 52px;
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--ivory);
+      margin-bottom: 16px;
+    }
+
+    .hero-title span { color: var(--copper); }
+
+    .hero-sub {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--dim);
+      letter-spacing: 0.06em;
+      margin-bottom: 40px;
+    }
+
+    /* ── Search bar ── */
+    .search-wrap {
+      display: flex;
+      gap: 0;
+      max-width: 640px;
+      margin: 0 auto;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .search-wrap:focus-within {
+      border-color: rgba(196,154,108,0.5);
+    }
+
+    .search-input {
+      flex: 1;
+      background: rgba(250,248,245,0.03);
+      border: none;
+      outline: none;
+      padding: 14px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--ivory);
+      letter-spacing: 0.04em;
+    }
+
+    .search-input::placeholder { color: rgba(250,248,245,0.25); }
+
+    .search-btn {
+      background: var(--copper);
+      border: none;
+      padding: 14px 28px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--obsidian);
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .search-btn:hover { background: var(--amber); }
+
+    /* ── Three option cards ── */
+    .options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .option-card {
+      background: var(--obsidian);
+      padding: 40px 36px;
+      cursor: pointer;
+      transition: background 0.15s;
+      text-decoration: none;
+      display: block;
+      border-top: 2px solid transparent;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .option-card:hover {
+      background: rgba(196,154,108,0.04);
+      border-top-color: var(--copper);
+    }
+
+    .option-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 20px;
+    }
+
+    .option-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--ivory);
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .option-desc {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--dim);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .option-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: rgba(212,160,74,0.75);
+      letter-spacing: 0.04em;
+      word-break: break-all;
+    }
+
+    /* ── Result panel ── */
+    .result-wrap {
+      max-width: 760px;
+      margin: 48px auto;
+      padding: 0 48px;
+      width: 100%;
+    }
+
+    .result-box {
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--green);
+      padding: 32px 36px;
+      display: none;
+    }
+
+    .result-box.error { border-top-color: #8B3A3A; }
+    .result-box.visible { display: block; }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .result-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+    }
+
+    .result-dot.fail { background: #8B3A3A; }
+
+    .result-status {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--ivory);
+    }
+
+    .result-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--copper);
+      margin-left: auto;
+    }
+
+    .checks-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--dim);
+      letter-spacing: 0.04em;
+    }
+
+    .check-item.pass { color: rgba(74,124,89,0.9); }
+    .check-item.fail { color: rgba(139,58,58,0.9); }
+
+    .check-icon { font-size: 12px; }
+
+    .result-meta {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: rgba(250,248,245,0.3);
+      letter-spacing: 0.04em;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 32px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--dim);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: none;
+    }
+
+    .loading.visible { display: block; }
+
+    /* ── Key panel (for /key/ requests) ── */
+    .key-box {
+      background: rgba(250,248,245,0.02);
+      padding: 20px;
+      margin-top: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: rgba(196,154,108,0.7);
+      word-break: break-all;
+      line-height: 1.7;
+      border: 1px solid var(--border);
+    }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: auto;
+      padding: 24px 48px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-text {
+      font-size: 11px;
+      color: rgba(250,248,245,0.2);
+      letter-spacing: 0.08em;
+    }
+
+    .footer-mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: rgba(196,154,108,0.35);
+      letter-spacing: 0.06em;
+    }
+
+    @media (max-width: 768px) {
+      header { padding: 20px 24px; }
+      .hero { padding: 48px 24px 40px; }
+      .hero-title { font-size: 36px; }
+      .options { grid-template-columns: 1fr; }
+      .result-wrap { padding: 0 24px; }
+      .checks-grid { grid-template-columns: repeat(2, 1fr); }
+      footer { padding: 20px 24px; flex-direction: column; gap: 8px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-rule"></div>
+
+<header>
+  <a href="/" class="brand">Axeum Technologies</a>
+  <span class="header-tag">Receipt of Record &nbsp;·&nbsp; Public Verification</span>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">Independent Verification</div>
+  <h1 class="hero-title">Verify any <span>receipt.</span><br>No account required.</h1>
+  <p class="hero-sub">Hardware-signed &nbsp;·&nbsp; RSA-4096 &nbsp;·&nbsp; FIPS 140-2 &nbsp;·&nbsp; FRE 902(14) self-authenticating</p>
+  <div class="search-wrap">
+    <input
+      class="search-input"
+      id="receiptInput"
+      type="text"
+      placeholder="Enter receipt ID — e.g. RCP-2026-166684"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <button class="search-btn" onclick="verifyReceipt()">Verify</button>
+  </div>
+</section>
+
+<div class="options">
+  <a class="option-card" href="#" onclick="runDemo(); return false;">
+    <div class="option-num">01 &nbsp;·&nbsp; Live Proof</div>
+    <div class="option-title">Verify a<br>Production Receipt</div>
+    <div class="option-desc">A real receipt from axeumOS production. Signed by hardware. Verifiable right now.</div>
+    <div class="option-url">verify.axeumai.com/RCP-2026-166684</div>
+  </a>
+
+  <a class="option-card" href="#" onclick="document.getElementById('receiptInput').focus(); return false;">
+    <div class="option-num">02 &nbsp;·&nbsp; Any Receipt</div>
+    <div class="option-title">Enter Any<br>Receipt ID</div>
+    <div class="option-desc">Paste any receipt ID from any Axeum pillar. 6 cryptographic checks run in real time.</div>
+    <div class="option-url">verify.axeumai.com/{receipt_id}</div>
+  </a>
+
+  <a class="option-card" href="#" onclick="fetchPublicKey(); return false;">
+    <div class="option-num">03 &nbsp;·&nbsp; Public Key</div>
+    <div class="option-title">RSA-4096<br>Signing Key</div>
+    <div class="option-desc">The hardware signing key. Verify any receipt signature offline using standard tools.</div>
+    <div class="option-url">verify.axeumai.com/key/yubihsm-0x4afb</div>
+  </a>
+</div>
+
+<div class="result-wrap">
+  <div class="loading" id="loading">Verifying &nbsp;·&nbsp; contacting axeumOS&hellip;</div>
+  <div class="result-box" id="resultBox">
+    <div class="result-header">
+      <div class="result-dot" id="resultDot"></div>
+      <div class="result-status" id="resultStatus"></div>
+      <div class="result-id" id="resultId"></div>
+    </div>
+    <div class="checks-grid" id="checksGrid"></div>
+    <div class="result-meta" id="resultMeta"></div>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-text">Axeum Technologies &nbsp;·&nbsp; Receipt of Record</span>
+  <span class="footer-mono">RSASSA-PSS &nbsp;·&nbsp; SHA-256 &nbsp;·&nbsp; RFC 3161 TSA &nbsp;·&nbsp; FRE 902(14)</span>
+</footer>
+
+<script>
+  const API = 'https://dev-api.os.axeumai.com/api/public/verify';
+
+  const CHECK_LABELS = {
+    signature_valid:    'Signature',
+    hash_matches:       'Hash',
+    events_merkle_valid:'Events Merkle',
+    evidence_merkle_valid:'Evidence Merkle',
+    chain_valid:        'Chain',
+    bundle_valid:       'Bundle',
+  };
+
+  function showLoading(on) {
+    document.getElementById('loading').classList.toggle('visible', on);
+    document.getElementById('resultBox').classList.remove('visible');
+  }
+
+  function showResult(data, receiptId) {
+    const box = document.getElementById('resultBox');
+    const dot = document.getElementById('resultDot');
+    const status = document.getElementById('resultStatus');
+    const idEl = document.getElementById('resultId');
+    const grid = document.getElementById('checksGrid');
+    const meta = document.getElementById('resultMeta');
+
+    const valid = data.valid === true;
+    box.className = 'result-box visible' + (valid ? '' : ' error');
+    dot.className = 'result-dot' + (valid ? '' : ' fail');
+    status.textContent = valid ? 'Verified — all checks passed' : 'Verification failed';
+    idEl.textContent = receiptId || data.receipt_id || '';
+
+    // Checks
+    const checks = data.checks || {};
+    grid.innerHTML = Object.entries(CHECK_LABELS).map(([key, label]) => {
+      const pass = checks[key] === true;
+      const icon = pass ? '✓' : (checks[key] === false ? '✗' : '—');
+      return `<div class="check-item ${pass ? 'pass' : checks[key] === false ? 'fail' : ''}">
+        <span class="check-icon">${icon}</span>${label}
+      </div>`;
+    }).join('');
+
+    // Meta
+    const parts = [];
+    if (data.verified_at) parts.push(`Verified ${new Date(data.verified_at).toUTCString()}`);
+    if (data.checks_performed) parts.push(`${data.checks_performed} checks`);
+    if (data.workflow_root_id) parts.push(`Workflow ${data.workflow_root_id}`);
+    meta.textContent = parts.join(' · ');
+
+    box.classList.add('visible');
+  }
+
+  function showKeyResult(data) {
+    const box = document.getElementById('resultBox');
+    const dot = document.getElementById('resultDot');
+    const status = document.getElementById('resultStatus');
+    const idEl = document.getElementById('resultId');
+    const grid = document.getElementById('checksGrid');
+    const meta = document.getElementById('resultMeta');
+
+    box.className = 'result-box visible';
+    dot.className = 'result-dot';
+    status.textContent = 'RSA-4096 Public Signing Key';
+    idEl.textContent = data.key_id || 'yubihsm-0x4afb';
+
+    const pem = data.public_key_der
+      ? atob(data.public_key_der)
+      : '(unavailable)';
+
+    grid.innerHTML = `<div class="key-box" style="grid-column:1/-1">${escapeHtml(pem.substring(0, 400))}...</div>`;
+    meta.textContent = `Encoding: ${data.encoding || 'base64-pem'} · Algorithm: RSASSA-PSS SHA-256 · Key: ${data.key_id || ''}`;
+    box.classList.add('visible');
+  }
+
+  function showError(msg) {
+    const box = document.getElementById('resultBox');
+    box.className = 'result-box visible error';
+    document.getElementById('resultDot').className = 'result-dot fail';
+    document.getElementById('resultStatus').textContent = msg;
+    document.getElementById('resultId').textContent = '';
+    document.getElementById('checksGrid').innerHTML = '';
+    document.getElementById('resultMeta').textContent = '';
+    box.classList.add('visible');
+  }
+
+  async function verifyReceipt() {
+    const raw = document.getElementById('receiptInput').value.trim();
+    if (!raw) { document.getElementById('receiptInput').focus(); return; }
+
+    showLoading(true);
+    try {
+      const res = await fetch(`${API}/${encodeURIComponent(raw)}`);
+      const data = await res.json();
+      showLoading(false);
+      if (res.ok) showResult(data, raw);
+      else showError(data.error || `Error ${res.status}`);
+    } catch (e) {
+      showLoading(false);
+      showError('Network error — could not reach axeumOS');
+    }
+  }
+
+  async function runDemo() {
+    const id = 'RCP-2026-166684';
+    document.getElementById('receiptInput').value = id;
+    showLoading(true);
+    try {
+      const res = await fetch(`${API}/${id}`);
+      const data = await res.json();
+      showLoading(false);
+      if (res.ok) showResult(data, id);
+      else showError(data.error || `Error ${res.status}`);
+    } catch (e) {
+      showLoading(false);
+      showError('Network error — could not reach axeumOS');
+    }
+  }
+
+  async function fetchPublicKey() {
+    showLoading(true);
+    try {
+      const res = await fetch(`${API}/key/yubihsm-0x4afb`);
+      const data = await res.json();
+      showLoading(false);
+      if (res.ok) showKeyResult(data);
+      else showError(data.error || `Error ${res.status}`);
+    } catch (e) {
+      showLoading(false);
+      showError('Network error — could not reach axeumOS');
+    }
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // Allow Enter key in search
+  document.getElementById('receiptInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') verifyReceipt();
+  });
+
+  // Auto-run demo if receipt ID in URL path
+  const path = window.location.pathname.replace(/^\//, '');
+  if (path && path !== 'index.html') {
+    document.getElementById('receiptInput').value = path;
+    if (path.startsWith('key/')) {
+      fetchPublicKey();
+    } else {
+      verifyReceipt();
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -1,16 +1,23 @@
 {
   "rewrites": [
     {
-      "source": "/:path*",
-      "destination": "https://dev-api.os.axeumai.com/api/public/verify/:path*"
+      "source": "/RCP-:path*",
+      "destination": "https://dev-api.os.axeumai.com/api/public/verify/RCP-:path*"
+    },
+    {
+      "source": "/key/:path*",
+      "destination": "https://dev-api.os.axeumai.com/api/public/verify/key/:path*"
+    },
+    {
+      "source": "/offline",
+      "destination": "https://dev-api.os.axeumai.com/api/public/verify/offline"
     }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" }
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     }
   ]
