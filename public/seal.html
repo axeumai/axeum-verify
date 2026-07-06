@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cover Seal — Axeum Technologies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- QR code generator — no external tracking, pure client-side -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" integrity="sha384-Izc791esqyEy3BEIC42q7jbE0AaOkACziN+dyyXgYeDmpeMCLz0xA+xYN3aCd5zz" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --copper: #C49A6C;
+      --amber:  #D4A04A;
+      --obsidian: #1A1A1A;
+      --ivory: #FAF8F5;
+      --green: #4A7C59;
+      --dim: rgba(26,26,26,0.45);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #f5f3f0;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 24px;
+      min-height: 100vh;
+      gap: 24px;
+    }
+
+    /* ── Controls (hidden on print) ── */
+    .controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 10px 24px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+
+    .btn-primary { background: var(--copper); color: var(--obsidian); }
+    .btn-secondary { background: transparent; color: #666; border: 1px solid #ccc; }
+
+    .receipt-hint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #888;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── The seal card ── */
+    .seal {
+      width: 320px;
+      background: var(--obsidian);
+      border: 1px solid rgba(196,154,108,0.3);
+      border-top: 3px solid var(--copper);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* subtle A watermark */
+    .seal::after {
+      content: 'A';
+      position: absolute;
+      bottom: -20px;
+      right: -8px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 120px;
+      font-weight: 600;
+      color: rgba(196,154,108,0.06);
+      line-height: 1;
+      pointer-events: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .seal-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 14px;
+    }
+
+    .seal-body {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    /* QR code */
+    #qrCanvas {
+      width: 72px !important;
+      height: 72px !important;
+      flex-shrink: 0;
+      border: 1px solid rgba(196,154,108,0.2);
+      padding: 4px;
+      background: #111;
+    }
+
+    .seal-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .seal-statement {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(250,248,245,0.75);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .seal-receipt-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--copper);
+      letter-spacing: 0.08em;
+      word-break: break-all;
+      margin-bottom: 8px;
+    }
+
+    .seal-verify {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: rgba(250,248,245,0.3);
+      letter-spacing: 0.06em;
+    }
+
+    .seal-divider {
+      height: 1px;
+      background: rgba(196,154,108,0.15);
+      margin: 16px 0 14px;
+    }
+
+    .seal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .seal-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(196,154,108,0.5);
+    }
+
+    .seal-checks {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .check-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .checks-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      color: rgba(74,124,89,0.8);
+      letter-spacing: 0.08em;
+      margin-left: 4px;
+    }
+
+    /* ── Also render a light version ── */
+    .seal-light {
+      width: 320px;
+      background: #fff;
+      border: 1px solid rgba(196,154,108,0.4);
+      border-top: 3px solid var(--copper);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .seal-light::after {
+      content: 'A';
+      position: absolute;
+      bottom: -20px;
+      right: -8px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 120px;
+      font-weight: 600;
+      color: rgba(196,154,108,0.07);
+      line-height: 1;
+      pointer-events: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .seal-light .seal-eyebrow { color: var(--copper); }
+    .seal-light .seal-statement { color: rgba(26,26,26,0.75); }
+    .seal-light .seal-receipt-id { color: var(--copper); }
+    .seal-light .seal-verify { color: rgba(26,26,26,0.35); }
+    .seal-light .seal-divider { background: rgba(196,154,108,0.2); }
+    .seal-light .seal-brand { color: rgba(196,154,108,0.6); }
+
+    #qrCanvasLight {
+      width: 72px !important;
+      height: 72px !important;
+      flex-shrink: 0;
+      border: 1px solid rgba(196,154,108,0.2);
+      padding: 4px;
+      background: #fff;
+    }
+
+    .variant-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #999;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      align-self: flex-start;
+    }
+
+    @media print {
+      body { background: white; padding: 0; gap: 0; }
+      .controls { display: none; }
+      .variant-label { display: none; }
+      .seal { page-break-after: always; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="controls">
+  <button type="button" class="btn btn-primary" onclick="window.print()">Print / Save PDF</button>
+  <button type="button" class="btn btn-secondary" onclick="history.back()">← Back</button>
+  <span class="receipt-hint" id="receiptDisplay"></span>
+</div>
+
+<span class="variant-label">Dark seal</span>
+
+<!-- Dark seal -->
+<div class="seal" id="sealDark">
+  <div class="seal-eyebrow">Cover Seal &nbsp;·&nbsp; Receipt of Record</div>
+  <div class="seal-body">
+    <canvas id="qrCanvas"></canvas>
+    <div class="seal-text">
+      <div class="seal-statement">This document is governed by a signed Receipt of Record.</div>
+      <div class="seal-receipt-id" id="receiptIdDark"></div>
+      <div class="seal-verify">verify.axeumai.com</div>
+    </div>
+  </div>
+  <div class="seal-divider"></div>
+  <div class="seal-footer">
+    <span class="seal-brand">Axeum Technologies</span>
+    <div class="seal-checks">
+      <div class="check-dot"></div>
+      <span class="checks-label">6/6 checks &nbsp;·&nbsp; RSA-4096</span>
+    </div>
+  </div>
+</div>
+
+<span class="variant-label">Light seal (for white documents)</span>
+
+<!-- Light seal -->
+<div class="seal-light" id="sealLight">
+  <div class="seal-eyebrow">Cover Seal &nbsp;·&nbsp; Receipt of Record</div>
+  <div class="seal-body">
+    <canvas id="qrCanvasLight"></canvas>
+    <div class="seal-text">
+      <div class="seal-statement">This document is governed by a signed Receipt of Record.</div>
+      <div class="seal-receipt-id" id="receiptIdLight"></div>
+      <div class="seal-verify">verify.axeumai.com</div>
+    </div>
+  </div>
+  <div class="seal-divider"></div>
+  <div class="seal-footer">
+    <span class="seal-brand">Axeum Technologies</span>
+    <div class="seal-checks">
+      <div class="check-dot"></div>
+      <span class="checks-label">6/6 checks &nbsp;·&nbsp; RSA-4096</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Read receipt ID from URL path: /seal/RCP-2026-166684
+  const pathParts = window.location.pathname.split('/').filter(Boolean);
+  const receiptId = pathParts.length >= 2 ? pathParts.slice(1).join('/') : 'RCP-2026-166684';
+  const verifyUrl = `https://verify.axeumai.com/${receiptId}`;
+
+  // Display
+  document.getElementById('receiptDisplay').textContent = receiptId;
+  document.getElementById('receiptIdDark').textContent = receiptId;
+  document.getElementById('receiptIdLight').textContent = receiptId;
+  document.title = `Cover Seal — ${receiptId} — Axeum Technologies`;
+
+  // Generate QR codes
+  const qrOpts = { width: 72, margin: 0, color: { dark: '#C49A6C', light: '#111111' } };
+  QRCode.toCanvas(document.getElementById('qrCanvas'), verifyUrl, qrOpts, err => {
+    if (err) console.error('QR error:', err);
+  });
+
+  const qrOptsLight = { width: 72, margin: 0, color: { dark: '#1A1A1A', light: '#ffffff' } };
+  QRCode.toCanvas(document.getElementById('qrCanvasLight'), verifyUrl, qrOptsLight, err => {
+    if (err) console.error('QR error:', err);
+  });
+</script>
+
+</body>
+</html>
