@@ -1,17 +1,8 @@
 {
+  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
-    {
-      "source": "/RCP-:path*",
-      "destination": "https://dev-api.os.axeumai.com/api/public/verify/RCP-:path*"
-    },
-    {
-      "source": "/key/:path*",
-      "destination": "https://dev-api.os.axeumai.com/api/public/verify/key/:path*"
-    },
-    {
-      "source": "/offline",
-      "destination": "https://dev-api.os.axeumai.com/api/public/verify/offline"
-    }
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
     {
