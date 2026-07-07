@@ -281,11 +281,43 @@
       margin-top: 20px;
       padding-top: 20px;
       border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .result-meta-text {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       color: rgba(250,248,245,0.3);
       letter-spacing: 0.04em;
     }
+
+    .seal-btn {
+      flex-shrink: 0;
+      padding: 8px 18px;
+      background: transparent;
+      border: 1px solid rgba(196,154,108,0.35);
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--copper);
+      cursor: pointer;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: background 0.15s, border-color 0.15s;
+      display: none;
+    }
+
+    .seal-btn:hover {
+      background: rgba(196,154,108,0.08);
+      border-color: var(--copper);
+    }
+
+    .seal-btn.visible { display: inline-block; }
 
     .loading {
       text-align: center;
@@ -369,7 +401,7 @@
       autocomplete="off"
       spellcheck="false"
     />
-    <button class="search-btn" onclick="verifyReceipt()">Verify</button>
+    <button type="button" class="search-btn" onclick="verifyReceipt()">Verify</button>
   </div>
 </section>
 
@@ -405,7 +437,10 @@
       <div class="result-id" id="resultId"></div>
     </div>
     <div class="checks-grid" id="checksGrid"></div>
-    <div class="result-meta" id="resultMeta"></div>
+    <div class="result-meta" id="resultMeta">
+      <span class="result-meta-text" id="resultMetaText"></span>
+      <a class="seal-btn" id="sealBtn" target="_blank" rel="noopener">Create Cover Seal →</a>
+    </div>
   </div>
 </div>
 
@@ -460,7 +495,17 @@
     if (data.verified_at) parts.push(`Verified ${new Date(data.verified_at).toUTCString()}`);
     if (data.checks_performed) parts.push(`${data.checks_performed} checks`);
     if (data.workflow_root_id) parts.push(`Workflow ${data.workflow_root_id}`);
-    meta.textContent = parts.join(' · ');
+    document.getElementById('resultMetaText').textContent = parts.join(' · ');
+
+    // Seal button — only shown when verification passes
+    const sealBtn = document.getElementById('sealBtn');
+    const rid = receiptId || data.receipt_id || '';
+    if (valid && rid) {
+      sealBtn.href = `/seal?id=${encodeURIComponent(rid)}`;
+      sealBtn.classList.add('visible');
+    } else {
+      sealBtn.classList.remove('visible');
+    }
 
     box.classList.add('visible');
   }
@@ -471,7 +516,6 @@
     const status = document.getElementById('resultStatus');
     const idEl = document.getElementById('resultId');
     const grid = document.getElementById('checksGrid');
-    const meta = document.getElementById('resultMeta');
 
     box.className = 'result-box visible';
     dot.className = 'result-dot';
@@ -483,7 +527,9 @@
       : '(unavailable)';
 
     grid.innerHTML = `<div class="key-box" style="grid-column:1/-1">${escapeHtml(pem.substring(0, 400))}...</div>`;
-    meta.textContent = `Encoding: ${data.encoding || 'base64-pem'} · Algorithm: RSASSA-PSS SHA-256 · Key: ${data.key_id || ''}`;
+    document.getElementById('resultMetaText').textContent =
+      `Encoding: ${data.encoding || 'base64-pem'} · Algorithm: RSASSA-PSS SHA-256 · Key: ${data.key_id || ''}`;
+    document.getElementById('sealBtn').classList.remove('visible');
     box.classList.add('visible');
   }
 
@@ -494,7 +540,8 @@
     document.getElementById('resultStatus').textContent = msg;
     document.getElementById('resultId').textContent = '';
     document.getElementById('checksGrid').innerHTML = '';
-    document.getElementById('resultMeta').textContent = '';
+    document.getElementById('resultMetaText').textContent = '';
+    document.getElementById('sealBtn').classList.remove('visible');
     box.classList.add('visible');
   }
 
