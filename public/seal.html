@@ -301,9 +301,9 @@
 </div>
 
 <script>
-  // Read receipt ID from URL path: /seal/RCP-2026-166684
-  const pathParts = window.location.pathname.split('/').filter(Boolean);
-  const receiptId = pathParts.length >= 2 ? pathParts.slice(1).join('/') : 'RCP-2026-166684';
+  // Read receipt ID from ?id= query param: /seal?id=RCP-2026-166684
+  const params = new URLSearchParams(window.location.search);
+  const receiptId = params.get('id') || 'RCP-2026-166684';
   const verifyUrl = `https://verify.axeumai.com/${receiptId}`;
 
   // Display
