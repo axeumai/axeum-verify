@@ -600,7 +600,7 @@
       <div class="seal-inline" id="sealDark">
         <div class="seal-inline-eyebrow">Cover Seal &nbsp;·&nbsp; Receipt of Record</div>
         <div class="seal-inline-body">
-          <img id="sealQrDark" class="seal-inline-qr" alt="Verify QR" />
+          <canvas id="sealQrDark" class="seal-inline-qr"></canvas>
           <div class="seal-inline-text">
             <div class="seal-inline-stmt">This document is governed by a signed Receipt of Record.</div>
             <div class="seal-inline-id" id="sealIdDark"></div>
@@ -619,7 +619,7 @@
       <div class="seal-inline light" id="sealLight">
         <div class="seal-inline-eyebrow">Cover Seal &nbsp;·&nbsp; Receipt of Record</div>
         <div class="seal-inline-body">
-          <img id="sealQrLight" class="seal-inline-qr" alt="Verify QR" />
+          <canvas id="sealQrLight" class="seal-inline-qr"></canvas>
           <div class="seal-inline-text">
             <div class="seal-inline-stmt">This document is governed by a signed Receipt of Record.</div>
             <div class="seal-inline-id" id="sealIdLight"></div>
@@ -699,14 +699,14 @@
       // Wire the "open full page" button
       sealBtn.href = `/seal?id=${encodeURIComponent(rid)}`;
       sealBtn.classList.add('visible');
-      // Populate and show inline seal pair
-      const enc = encodeURIComponent(`https://verify.axeumai.com/${rid}`);
+      // Populate and show inline seal pair — QR rendered locally, no third-party
+      const verifyUrl = `https://verify.axeumai.com/${rid}`;
       document.getElementById('sealIdDark').textContent = rid;
       document.getElementById('sealIdLight').textContent = rid;
-      document.getElementById('sealQrDark').src =
-        `https://api.qrserver.com/v1/create-qr-code/?size=120x120&margin=4&data=${enc}&color=C49A6C&bgcolor=111111`;
-      document.getElementById('sealQrLight').src =
-        `https://api.qrserver.com/v1/create-qr-code/?size=120x120&margin=4&data=${enc}&color=1A1A1A&bgcolor=FFFFFF`;
+      QRCode.toCanvas(document.getElementById('sealQrDark'), verifyUrl,
+        { width: 60, margin: 1, color: { dark: '#C49A6C', light: '#111111' } });
+      QRCode.toCanvas(document.getElementById('sealQrLight'), verifyUrl,
+        { width: 60, margin: 1, color: { dark: '#1A1A1A', light: '#ffffff' } });
       sealPair.classList.add('visible');
     } else {
       sealBtn.classList.remove('visible');
@@ -820,6 +820,7 @@
     }
   }
 </script>
+<script src="/qr.min.js"></script>
 
 </body>
 </html>

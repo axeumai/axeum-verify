@@ -1,0 +1,24 @@
+{
+  "name": "axeum-verify",
+  "version": "1.0.0",
+  "description": "Public receipt verification proxy for Axeum Technologies.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/axeumai/axeum-verify.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/axeumai/axeum-verify/issues"
+  },
+  "homepage": "https://github.com/axeumai/axeum-verify#readme",
+  "dependencies": {
+    "qrcode": "^1.5.3"
+  }
+}

@@ -112,6 +112,9 @@
       display: block;
     }
 
+    .qr-dark  { background: #111; }
+    .qr-light { background: #fff; }
+
     .seal-text {
       flex: 1;
       min-width: 0;
@@ -251,7 +254,7 @@
 <div class="seal" id="sealDark">
   <div class="seal-eyebrow">Cover Seal &nbsp;·&nbsp; Receipt of Record</div>
   <div class="seal-body">
-    <img id="qrImg" class="qr-img" alt="QR code — scan to verify" style="background:#111" />
+    <canvas id="qrCanvas" class="qr-img qr-dark"></canvas>
     <div class="seal-text">
       <div class="seal-statement">This document is governed by a signed Receipt of Record.</div>
       <div class="seal-receipt-id" id="receiptIdDark"></div>
@@ -274,7 +277,7 @@
 <div class="seal-light" id="sealLight">
   <div class="seal-eyebrow">Cover Seal &nbsp;·&nbsp; Receipt of Record</div>
   <div class="seal-body">
-    <img id="qrImgLight" class="qr-img" alt="QR code — scan to verify" style="background:#fff" />
+    <canvas id="qrCanvasLight" class="qr-img qr-light"></canvas>
     <div class="seal-text">
       <div class="seal-statement">This document is governed by a signed Receipt of Record.</div>
       <div class="seal-receipt-id" id="receiptIdLight"></div>
@@ -291,6 +294,7 @@
   </div>
 </div>
 
+<script src="/qr.min.js"></script>
 <script>
   // Read receipt ID from ?id= query param: /seal?id=RCP-2026-166684
   const params = new URLSearchParams(window.location.search);
@@ -303,12 +307,11 @@
   document.getElementById('receiptIdLight').textContent = receiptId;
   document.title = `Cover Seal — ${receiptId} — Axeum Technologies`;
 
-  // QR codes — server-rendered via qrserver.com (no JS library needed)
-  const enc = encodeURIComponent(verifyUrl);
-  document.getElementById('qrImg').src =
-    `https://api.qrserver.com/v1/create-qr-code/?size=144x144&margin=4&data=${enc}&color=C49A6C&bgcolor=111111`;
-  document.getElementById('qrImgLight').src =
-    `https://api.qrserver.com/v1/create-qr-code/?size=144x144&margin=4&data=${enc}&color=1A1A1A&bgcolor=FFFFFF`;
+  // QR codes — rendered locally via bundled library, no third-party requests
+  QRCode.toCanvas(document.getElementById('qrCanvas'), verifyUrl,
+    { width: 72, margin: 1, color: { dark: '#C49A6C', light: '#111111' } });
+  QRCode.toCanvas(document.getElementById('qrCanvasLight'), verifyUrl,
+    { width: 72, margin: 1, color: { dark: '#1A1A1A', light: '#ffffff' } });
 </script>
 
 </body>
