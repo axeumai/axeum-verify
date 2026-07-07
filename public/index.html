@@ -700,13 +700,15 @@
       sealBtn.href = `/seal?id=${encodeURIComponent(rid)}`;
       sealBtn.classList.add('visible');
       // Populate and show inline seal pair — QR rendered locally, no third-party
-      const verifyUrl = `https://verify.axeumai.com/${rid}`;
+      const verifyUrl = `https://verify.axeumai.com/?id=${encodeURIComponent(rid)}`;
       document.getElementById('sealIdDark').textContent = rid;
       document.getElementById('sealIdLight').textContent = rid;
+      // A QR must be dark-modules-on-light to scan reliably; margin >=2 is the quiet zone.
+      // (Copper-on-black is inverted + low-contrast and most phone cameras won't read it.)
       QRCode.toCanvas(document.getElementById('sealQrDark'), verifyUrl,
-        { width: 60, margin: 1, color: { dark: '#C49A6C', light: '#111111' } });
+        { width: 60, margin: 2, color: { dark: '#1A1A1A', light: '#FAF8F5' } });
       QRCode.toCanvas(document.getElementById('sealQrLight'), verifyUrl,
-        { width: 60, margin: 1, color: { dark: '#1A1A1A', light: '#ffffff' } });
+        { width: 60, margin: 2, color: { dark: '#1A1A1A', light: '#ffffff' } });
       sealPair.classList.add('visible');
     } else {
       sealBtn.classList.remove('visible');
@@ -809,8 +811,9 @@
     if (e.key === 'Enter') verifyReceipt();
   });
 
-  // Auto-run demo if receipt ID in URL path
-  const path = window.location.pathname.replace(/^\//, '');
+  // Auto-run from ?id= query param (QR / deep-link) or URL path
+  const qs = new URLSearchParams(window.location.search);
+  const path = (qs.get('id') || window.location.pathname.replace(/^\//, '')).trim();
   if (path && path !== 'index.html') {
     document.getElementById('receiptInput').value = path;
     if (path.startsWith('key/')) {
