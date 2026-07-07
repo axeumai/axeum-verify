@@ -319,6 +319,160 @@
 
     .seal-btn.visible { display: inline-block; }
 
+    /* ── Inline seal pair ── */
+    .seal-pair {
+      display: none;
+      gap: 16px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .seal-pair.visible { display: flex; }
+
+    .seal-inline {
+      flex: 1;
+      border: 1px solid rgba(196,154,108,0.2);
+      border-top: 2px solid rgba(196,154,108,0.5);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .seal-inline.light {
+      background: rgba(250,248,245,0.95);
+    }
+
+    .seal-inline::after {
+      content: 'A';
+      position: absolute;
+      bottom: -12px;
+      right: -4px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 72px;
+      font-weight: 600;
+      color: rgba(196,154,108,0.07);
+      line-height: 1;
+      pointer-events: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .seal-inline-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 12px;
+    }
+
+    .seal-inline-body {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .seal-inline-qr {
+      width: 60px;
+      height: 60px;
+      flex-shrink: 0;
+      display: block;
+      border: 1px solid rgba(196,154,108,0.15);
+      padding: 2px;
+      background: #111;
+    }
+
+    .seal-inline.light .seal-inline-qr { background: #fff; }
+
+    .seal-inline-text { flex: 1; min-width: 0; }
+
+    .seal-inline-stmt {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 12px;
+      color: rgba(250,248,245,0.7);
+      line-height: 1.45;
+      margin-bottom: 6px;
+    }
+
+    .seal-inline.light .seal-inline-stmt { color: rgba(26,26,26,0.7); }
+
+    .seal-inline-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--copper);
+      letter-spacing: 0.06em;
+      word-break: break-all;
+      margin-bottom: 4px;
+    }
+
+    .seal-inline-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      color: rgba(250,248,245,0.25);
+      letter-spacing: 0.05em;
+    }
+
+    .seal-inline.light .seal-inline-url { color: rgba(26,26,26,0.25); }
+
+    .seal-inline-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(196,154,108,0.12);
+    }
+
+    .seal-inline-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 9px;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(196,154,108,0.45);
+    }
+
+    .seal-inline-checks {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      color: rgba(74,124,89,0.75);
+      letter-spacing: 0.06em;
+    }
+
+    .seal-inline-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .seal-print-btn {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 7px;
+      background: transparent;
+      border: 1px solid rgba(196,154,108,0.2);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(196,154,108,0.5);
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .seal-print-btn:hover {
+      border-color: var(--copper);
+      color: var(--copper);
+    }
+
     .loading {
       text-align: center;
       padding: 32px;
@@ -439,7 +593,47 @@
     <div class="checks-grid" id="checksGrid"></div>
     <div class="result-meta" id="resultMeta">
       <span class="result-meta-text" id="resultMetaText"></span>
-      <a class="seal-btn" id="sealBtn" target="_blank" rel="noopener">Create Cover Seal →</a>
+      <a class="seal-btn" id="sealBtn" target="_blank" rel="noopener">Open Full Seal Page →</a>
+    </div>
+    <div class="seal-pair" id="sealPair">
+      <!-- Dark seal -->
+      <div class="seal-inline" id="sealDark">
+        <div class="seal-inline-eyebrow">Cover Seal &nbsp;·&nbsp; Receipt of Record</div>
+        <div class="seal-inline-body">
+          <img id="sealQrDark" class="seal-inline-qr" alt="Verify QR" />
+          <div class="seal-inline-text">
+            <div class="seal-inline-stmt">This document is governed by a signed Receipt of Record.</div>
+            <div class="seal-inline-id" id="sealIdDark"></div>
+            <div class="seal-inline-url">verify.axeumai.com</div>
+          </div>
+        </div>
+        <div class="seal-inline-footer">
+          <span class="seal-inline-brand">Axeum Technologies</span>
+          <div class="seal-inline-checks">
+            <div class="seal-inline-dot"></div>
+            <span>6/6 &nbsp;·&nbsp; RSA-4096</span>
+          </div>
+        </div>
+      </div>
+      <!-- Light seal -->
+      <div class="seal-inline light" id="sealLight">
+        <div class="seal-inline-eyebrow">Cover Seal &nbsp;·&nbsp; Receipt of Record</div>
+        <div class="seal-inline-body">
+          <img id="sealQrLight" class="seal-inline-qr" alt="Verify QR" />
+          <div class="seal-inline-text">
+            <div class="seal-inline-stmt">This document is governed by a signed Receipt of Record.</div>
+            <div class="seal-inline-id" id="sealIdLight"></div>
+            <div class="seal-inline-url">verify.axeumai.com</div>
+          </div>
+        </div>
+        <div class="seal-inline-footer">
+          <span class="seal-inline-brand">Axeum Technologies</span>
+          <div class="seal-inline-checks">
+            <div class="seal-inline-dot"></div>
+            <span>6/6 &nbsp;·&nbsp; RSA-4096</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -497,14 +691,26 @@
     if (data.workflow_root_id) parts.push(`Workflow ${data.workflow_root_id}`);
     document.getElementById('resultMetaText').textContent = parts.join(' · ');
 
-    // Seal button — only shown when verification passes
+    // Seal button + inline seals — only shown when verification passes
     const sealBtn = document.getElementById('sealBtn');
+    const sealPair = document.getElementById('sealPair');
     const rid = receiptId || data.receipt_id || '';
     if (valid && rid) {
+      // Wire the "open full page" button
       sealBtn.href = `/seal?id=${encodeURIComponent(rid)}`;
       sealBtn.classList.add('visible');
+      // Populate and show inline seal pair
+      const enc = encodeURIComponent(`https://verify.axeumai.com/${rid}`);
+      document.getElementById('sealIdDark').textContent = rid;
+      document.getElementById('sealIdLight').textContent = rid;
+      document.getElementById('sealQrDark').src =
+        `https://api.qrserver.com/v1/create-qr-code/?size=120x120&margin=4&data=${enc}&color=C49A6C&bgcolor=111111`;
+      document.getElementById('sealQrLight').src =
+        `https://api.qrserver.com/v1/create-qr-code/?size=120x120&margin=4&data=${enc}&color=1A1A1A&bgcolor=FFFFFF`;
+      sealPair.classList.add('visible');
     } else {
       sealBtn.classList.remove('visible');
+      sealPair.classList.remove('visible');
     }
 
     box.classList.add('visible');
@@ -530,6 +736,7 @@
     document.getElementById('resultMetaText').textContent =
       `Encoding: ${data.encoding || 'base64-pem'} · Algorithm: RSASSA-PSS SHA-256 · Key: ${data.key_id || ''}`;
     document.getElementById('sealBtn').classList.remove('visible');
+    document.getElementById('sealPair').classList.remove('visible');
     box.classList.add('visible');
   }
 
@@ -542,6 +749,7 @@
     document.getElementById('checksGrid').innerHTML = '';
     document.getElementById('resultMetaText').textContent = '';
     document.getElementById('sealBtn').classList.remove('visible');
+    document.getElementById('sealPair').classList.remove('visible');
     box.classList.add('visible');
   }
 
