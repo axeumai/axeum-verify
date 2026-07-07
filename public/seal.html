@@ -7,8 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <!-- QR code generator — no external tracking, pure client-side -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" integrity="sha384-Izc791esqyEy3BEIC42q7jbE0AaOkACziN+dyyXgYeDmpeMCLz0xA+xYN3aCd5zz" crossorigin="anonymous"></script>
   <style>
     :root {
       --copper: #C49A6C;
@@ -105,13 +103,13 @@
     }
 
     /* QR code */
-    #qrCanvas {
-      width: 72px !important;
-      height: 72px !important;
+    .qr-img {
+      width: 72px;
+      height: 72px;
       flex-shrink: 0;
       border: 1px solid rgba(196,154,108,0.2);
-      padding: 4px;
-      background: #111;
+      padding: 3px;
+      display: block;
     }
 
     .seal-text {
@@ -220,14 +218,7 @@
     .seal-light .seal-divider { background: rgba(196,154,108,0.2); }
     .seal-light .seal-brand { color: rgba(196,154,108,0.6); }
 
-    #qrCanvasLight {
-      width: 72px !important;
-      height: 72px !important;
-      flex-shrink: 0;
-      border: 1px solid rgba(196,154,108,0.2);
-      padding: 4px;
-      background: #fff;
-    }
+    /* qrCanvasLight removed — using .qr-img class for both */
 
     .variant-label {
       font-family: 'JetBrains Mono', monospace;
@@ -260,7 +251,7 @@
 <div class="seal" id="sealDark">
   <div class="seal-eyebrow">Cover Seal &nbsp;·&nbsp; Receipt of Record</div>
   <div class="seal-body">
-    <canvas id="qrCanvas"></canvas>
+    <img id="qrImg" class="qr-img" alt="QR code — scan to verify" style="background:#111" />
     <div class="seal-text">
       <div class="seal-statement">This document is governed by a signed Receipt of Record.</div>
       <div class="seal-receipt-id" id="receiptIdDark"></div>
@@ -283,7 +274,7 @@
 <div class="seal-light" id="sealLight">
   <div class="seal-eyebrow">Cover Seal &nbsp;·&nbsp; Receipt of Record</div>
   <div class="seal-body">
-    <canvas id="qrCanvasLight"></canvas>
+    <img id="qrImgLight" class="qr-img" alt="QR code — scan to verify" style="background:#fff" />
     <div class="seal-text">
       <div class="seal-statement">This document is governed by a signed Receipt of Record.</div>
       <div class="seal-receipt-id" id="receiptIdLight"></div>
@@ -312,16 +303,12 @@
   document.getElementById('receiptIdLight').textContent = receiptId;
   document.title = `Cover Seal — ${receiptId} — Axeum Technologies`;
 
-  // Generate QR codes
-  const qrOpts = { width: 72, margin: 0, color: { dark: '#C49A6C', light: '#111111' } };
-  QRCode.toCanvas(document.getElementById('qrCanvas'), verifyUrl, qrOpts, err => {
-    if (err) console.error('QR error:', err);
-  });
-
-  const qrOptsLight = { width: 72, margin: 0, color: { dark: '#1A1A1A', light: '#ffffff' } };
-  QRCode.toCanvas(document.getElementById('qrCanvasLight'), verifyUrl, qrOptsLight, err => {
-    if (err) console.error('QR error:', err);
-  });
+  // QR codes — server-rendered via qrserver.com (no JS library needed)
+  const enc = encodeURIComponent(verifyUrl);
+  document.getElementById('qrImg').src =
+    `https://api.qrserver.com/v1/create-qr-code/?size=144x144&margin=4&data=${enc}&color=C49A6C&bgcolor=111111`;
+  document.getElementById('qrImgLight').src =
+    `https://api.qrserver.com/v1/create-qr-code/?size=144x144&margin=4&data=${enc}&color=1A1A1A&bgcolor=FFFFFF`;
 </script>
 
 </body>
