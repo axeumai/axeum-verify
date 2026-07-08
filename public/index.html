@@ -522,6 +522,134 @@
       letter-spacing: 0.06em;
     }
 
+    /* ── Mode toggle (Receipt / Claim) ── */
+    .mode-toggle {
+      display: inline-flex;
+      gap: 1px;
+      margin: 0 auto 22px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      background: var(--border);
+    }
+
+    .mode-btn {
+      background: var(--obsidian);
+      border: none;
+      padding: 9px 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dim);
+      cursor: pointer;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .mode-btn.active { color: var(--obsidian); background: var(--copper); }
+    .mode-btn:not(.active):hover { color: var(--ivory); background: rgba(196,154,108,0.06); }
+
+    .claim-demo {
+      display: none;
+      margin-top: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      color: rgba(212,160,74,0.75);
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .claim-demo.visible { display: inline-block; }
+    .claim-demo:hover { color: var(--copper); }
+
+    /* ── Spine (visit) tree — the root unfolded into its receipts ── */
+    .spine-summary {
+      display: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--dim);
+      letter-spacing: 0.03em;
+      line-height: 1.85;
+      margin-bottom: 22px;
+      word-break: break-all;
+    }
+
+    .spine-summary b { color: var(--copper); font-weight: 500; }
+
+    .spine-tree {
+      display: none;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .spine-tree.visible { display: flex; }
+
+    .spine-leaf {
+      background: var(--obsidian);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+    }
+
+    .spine-leaf-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+    }
+
+    .spine-leaf-dot.fail { background: #8B3A3A; }
+
+    .spine-leaf-idx {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: rgba(196,154,108,0.45);
+      flex-shrink: 0;
+      width: 20px;
+    }
+
+    .spine-leaf-main { flex: 1; min-width: 0; }
+
+    .spine-leaf-type {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ivory);
+      line-height: 1.2;
+    }
+
+    .spine-leaf-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: rgba(212,160,74,0.7);
+      letter-spacing: 0.03em;
+      word-break: break-all;
+      margin-top: 3px;
+    }
+
+    .spine-leaf-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: rgba(250,248,245,0.3);
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    .spine-leaf-verdict {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      flex-shrink: 0;
+      color: rgba(74,124,89,0.9);
+    }
+
+    .spine-leaf-verdict.fail { color: rgba(139,58,58,0.9); }
+
     @media (max-width: 768px) {
       header { padding: 20px 24px; }
       .hero { padding: 48px 24px 40px; }
@@ -529,6 +657,7 @@
       .options { grid-template-columns: 1fr; }
       .result-wrap { padding: 0 24px; }
       .checks-grid { grid-template-columns: repeat(2, 1fr); }
+      .spine-leaf-time { display: none; }
       footer { padding: 20px 24px; flex-direction: column; gap: 8px; text-align: center; }
     }
   </style>
@@ -544,8 +673,12 @@
 
 <section class="hero">
   <div class="hero-eyebrow">Independent Verification</div>
-  <h1 class="hero-title">Verify any <span>receipt.</span><br>No account required.</h1>
+  <h1 class="hero-title">Verify any <span id="heroWord">receipt.</span><br>No account required.</h1>
   <p class="hero-sub">Hardware-signed &nbsp;·&nbsp; RSA-4096 &nbsp;·&nbsp; FIPS 140-2 &nbsp;·&nbsp; FRE 902(14) self-authenticating</p>
+  <div class="mode-toggle">
+    <button type="button" class="mode-btn active" id="modeReceipt" onclick="setMode('receipt')">Receipt</button>
+    <button type="button" class="mode-btn" id="modeClaim" onclick="setMode('claim')">Claim &nbsp;·&nbsp; Visit Spine</button>
+  </div>
   <div class="search-wrap">
     <input
       class="search-input"
@@ -555,8 +688,9 @@
       autocomplete="off"
       spellcheck="false"
     />
-    <button type="button" class="search-btn" onclick="verifyReceipt()">Verify</button>
+    <button type="button" class="search-btn" id="verifyBtn" onclick="verify()">Verify</button>
   </div>
+  <a class="claim-demo" id="claimDemo" onclick="runSpineDemo(); return false;">Try a live claim → unfold a real visit's spine</a>
 </section>
 
 <div class="options">
@@ -591,6 +725,8 @@
       <div class="result-id" id="resultId"></div>
     </div>
     <div class="checks-grid" id="checksGrid"></div>
+    <div class="spine-summary" id="spineSummary"></div>
+    <div class="spine-tree" id="spineTree"></div>
     <div class="result-meta" id="resultMeta">
       <span class="result-meta-text" id="resultMetaText"></span>
       <a class="seal-btn" id="sealBtn" target="_blank" rel="noopener">Open Full Seal Page →</a>
@@ -645,6 +781,10 @@
 
 <script>
   const API = 'https://api.os.axeumai.com/api/public/verify';
+  const SPINE_API = 'https://api.os.axeumai.com/api/verify/spine';
+  // A real, fully-attested visit spine (5 receipts) — live proof of the claim path.
+  const DEMO_SPINE = 'sha256:130d984b50977b19941164d957c5a9c692af930caf8e8045a9f52d3eb0159f59';
+  let mode = 'receipt';
 
   const CHECK_LABELS = {
     signature_valid:    'Signature',
@@ -660,7 +800,16 @@
     document.getElementById('resultBox').classList.remove('visible');
   }
 
+  // Hide the spine (claim) panels — called by the receipt / key / error renderers
+  // so the two verification modes never render on top of each other.
+  function hideSpine() {
+    document.getElementById('spineSummary').style.display = 'none';
+    document.getElementById('spineTree').classList.remove('visible');
+    document.getElementById('spineTree').innerHTML = '';
+  }
+
   function showResult(data, receiptId) {
+    hideSpine();
     const box = document.getElementById('resultBox');
     const dot = document.getElementById('resultDot');
     const status = document.getElementById('resultStatus');
@@ -719,6 +868,7 @@
   }
 
   function showKeyResult(data) {
+    hideSpine();
     const box = document.getElementById('resultBox');
     const dot = document.getElementById('resultDot');
     const status = document.getElementById('resultStatus');
@@ -743,6 +893,7 @@
   }
 
   function showError(msg) {
+    hideSpine();
     const box = document.getElementById('resultBox');
     box.className = 'result-box visible error';
     document.getElementById('resultDot').className = 'result-dot fail';
@@ -802,24 +953,165 @@
     }
   }
 
-  function escapeHtml(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // ── Claim (visit spine) verification ─────────────────────────────────────
+
+  function setMode(m) {
+    mode = m;
+    document.getElementById('modeReceipt').classList.toggle('active', m === 'receipt');
+    document.getElementById('modeClaim').classList.toggle('active', m === 'claim');
+    document.getElementById('heroWord').textContent = m === 'claim' ? 'claim.' : 'receipt.';
+    document.getElementById('claimDemo').classList.toggle('visible', m === 'claim');
+    const input = document.getElementById('receiptInput');
+    input.placeholder = m === 'claim'
+      ? 'Paste the spine root from a claim — e.g. sha256:130d984b…'
+      : 'Enter receipt ID — e.g. RCP-2026-166684';
+    input.focus();
   }
 
-  // Allow Enter key in search
+  // A spine root is a SHA-256 Merkle root: 'sha256:' + 64 hex (bare 64-hex accepted too).
+  function looksLikeSpineRoot(s) {
+    return /^(sha256:)?[a-f0-9]{64}$/i.test(s.trim());
+  }
+
+  // The Verify button / Enter key dispatch by mode, with auto-detect: a spine
+  // root pasted in receipt mode is routed to the claim path.
+  function verify() {
+    const raw = document.getElementById('receiptInput').value.trim();
+    if (mode === 'claim' || (raw.startsWith('sha256:') && looksLikeSpineRoot(raw))) {
+      return verifyClaim();
+    }
+    return verifyReceipt();
+  }
+
+  async function verifyClaim() {
+    let root = document.getElementById('receiptInput').value.trim();
+    if (!root) { document.getElementById('receiptInput').focus(); return; }
+    // Stored spine roots are 'sha256:'-prefixed; normalize a bare 64-hex paste.
+    if (/^[a-f0-9]{64}$/i.test(root)) root = 'sha256:' + root.toLowerCase();
+
+    showLoading(true);
+    try {
+      const res = await fetch(SPINE_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ spine_root: root }),
+      });
+      const data = await res.json();
+      showLoading(false);
+      // A 404 (unknown root) still returns the structured verdict — render it,
+      // don't collapse it to a generic error.
+      if (data && typeof data.valid === 'boolean') showSpineResult(data, root);
+      else showError(data.error || `Error ${res.status}`);
+    } catch (e) {
+      showLoading(false);
+      showError('Network error — could not reach axeumOS');
+    }
+  }
+
+  function runSpineDemo() {
+    setMode('claim');
+    document.getElementById('receiptInput').value = DEMO_SPINE;
+    verifyClaim();
+  }
+
+  function showSpineResult(data, spineRoot) {
+    const box = document.getElementById('resultBox');
+    const dot = document.getElementById('resultDot');
+    const status = document.getElementById('resultStatus');
+    const idEl = document.getElementById('resultId');
+    const grid = document.getElementById('checksGrid');
+    const summary = document.getElementById('spineSummary');
+    const tree = document.getElementById('spineTree');
+
+    const receipts = Array.isArray(data.receipts) ? data.receipts : [];
+    const verifiedCount = receipts.filter(r => r.verified === true).length;
+    const valid = data.valid === true;
+    const unknown = Array.isArray(data.errors) && data.errors.includes('spine root not recognized');
+
+    box.className = 'result-box visible' + (valid ? '' : ' error');
+    dot.className = 'result-dot' + (valid ? '' : ' fail');
+    status.textContent = valid
+      ? `Visit verified — ${verifiedCount}/${receipts.length} receipts authenticated`
+      : (unknown ? 'Spine root not recognized' : 'Verification failed');
+    idEl.textContent = '';
+
+    // This is a claim, not a single receipt — hide the receipt checks + seals.
+    grid.innerHTML = '';
+    document.getElementById('sealBtn').classList.remove('visible');
+    document.getElementById('sealPair').classList.remove('visible');
+
+    // Summary: the visit chain, receipt count, and the root that was submitted.
+    if (data.chain_id || receipts.length || spineRoot) {
+      summary.style.display = 'block';
+      summary.innerHTML =
+        (data.chain_id ? `Visit chain &nbsp;<b>${escapeHtml(data.chain_id)}</b><br>` : '') +
+        `Receipts in visit &nbsp;<b>${data.receipt_count != null ? data.receipt_count : receipts.length}</b>` +
+        (data.computed_at ? ` &nbsp;·&nbsp; spine computed ${new Date(data.computed_at).toUTCString()}` : '') +
+        `<br>Spine root &nbsp;<b>${escapeHtml(spineRoot)}</b>`;
+    } else {
+      summary.style.display = 'none';
+    }
+
+    // The tree: the root unfolded into its governed actions, each with a verdict.
+    if (receipts.length) {
+      tree.classList.add('visible');
+      tree.innerHTML = receipts.map((r, i) => {
+        const ok = r.verified === true;
+        const t = r.occurred_at
+          ? new Date(r.occurred_at).toISOString().replace('T', ' ').replace(/\..*/, ' UTC')
+          : '';
+        return `<div class="spine-leaf">
+          <div class="spine-leaf-dot ${ok ? '' : 'fail'}"></div>
+          <div class="spine-leaf-idx">${String(i + 1).padStart(2, '0')}</div>
+          <div class="spine-leaf-main">
+            <div class="spine-leaf-type">${escapeHtml(r.receipt_type || 'Receipt')}</div>
+            <div class="spine-leaf-id">${escapeHtml(r.receipt_id || '—')}</div>
+          </div>
+          <div class="spine-leaf-time">${escapeHtml(t)}</div>
+          <div class="spine-leaf-verdict ${ok ? '' : 'fail'}">${ok ? '✓ verified' : '✗ unverified'}</div>
+        </div>`;
+      }).join('');
+    } else {
+      tree.classList.remove('visible');
+      tree.innerHTML = '';
+    }
+
+    // Meta line: why it passed, or exactly what failed.
+    document.getElementById('resultMetaText').textContent =
+      valid
+        ? 'Merkle root authentic · every leaf receipt anchored + attested · FRE 902(14)'
+        : (Array.isArray(data.errors) && data.errors.length ? data.errors.join(' · ') : 'One or more checks failed');
+
+    box.classList.add('visible');
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // Allow Enter key in search — dispatches by mode / auto-detect
   document.getElementById('receiptInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') verifyReceipt();
+    if (e.key === 'Enter') verify();
   });
 
-  // Auto-run from ?id= query param (QR / deep-link) or URL path
+  // Auto-run from deep-link: ?spine= (claim) or ?id= / URL path (receipt, key, or
+  // a sha256: spine root). QR codes and claim links land here.
   const qs = new URLSearchParams(window.location.search);
+  const spineParam = (qs.get('spine') || '').trim();
   const path = (qs.get('id') || window.location.pathname.replace(/^\//, '')).trim();
-  if (path && path !== 'index.html') {
-    document.getElementById('receiptInput').value = path;
-    if (path.startsWith('key/')) {
-      fetchPublicKey();
+  if (spineParam) {
+    setMode('claim');
+    document.getElementById('receiptInput').value = spineParam;
+    verifyClaim();
+  } else if (path && path !== 'index.html') {
+    if (path.startsWith('sha256:')) {
+      setMode('claim');
+      document.getElementById('receiptInput').value = path;
+      verifyClaim();
     } else {
-      verifyReceipt();
+      document.getElementById('receiptInput').value = path;
+      if (path.startsWith('key/')) fetchPublicKey();
+      else verifyReceipt();
     }
   }
 </script>
