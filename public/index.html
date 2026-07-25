@@ -566,6 +566,85 @@
     .claim-demo:hover { color: var(--copper); }
 
     /* ── Spine (visit) tree — the root unfolded into its receipts ── */
+    /* ── Legends ── */
+    .legend-section {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      display: none;
+    }
+
+    .legend-section.visible { display: block; }
+
+    .legend-row {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .legend-block {
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .legend-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(196,154,108,0.5);
+      margin-bottom: 10px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+
+    .legend-dot.pass { background: var(--green); }
+    .legend-dot.fail { background: #8B3A3A; }
+    .legend-dot.na   { background: rgba(250,248,245,0.15); }
+
+    .legend-check-icon {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      flex-shrink: 0;
+      width: 14px;
+      text-align: center;
+    }
+
+    .legend-check-icon.pass { color: rgba(74,124,89,0.9); }
+    .legend-check-icon.fail { color: rgba(139,58,58,0.9); }
+    .legend-check-icon.na   { color: rgba(250,248,245,0.25); }
+
+    .legend-text { flex: 1; }
+
+    .legend-text-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--ivory);
+      letter-spacing: 0.04em;
+      margin-bottom: 2px;
+    }
+
+    .legend-text-desc {
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--dim);
+      line-height: 1.5;
+    }
+
+    /* ── Spine (visit) tree — the root unfolded into its receipts ── */
     .spine-summary {
       display: none;
       font-family: 'JetBrains Mono', monospace;
@@ -725,6 +804,87 @@
       <div class="result-id" id="resultId"></div>
     </div>
     <div class="checks-grid" id="checksGrid"></div>
+
+    <!-- Legends — shown after a receipt result, hidden for key/spine results -->
+    <div class="legend-section" id="legendSection">
+      <div class="legend-row">
+
+        <!-- Color legend -->
+        <div class="legend-block">
+          <div class="legend-label">Status Colors</div>
+          <div class="legend-item">
+            <div class="legend-dot pass"></div>
+            <div class="legend-text">
+              <div class="legend-text-name">Green — Passed</div>
+              <div class="legend-text-desc">Check completed successfully. This property of the receipt is cryptographically verified.</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot fail"></div>
+            <div class="legend-text">
+              <div class="legend-text-name">Red — Failed</div>
+              <div class="legend-text-desc">Check did not pass. The receipt may have been altered, is not in the registry, or the key has been revoked.</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot na"></div>
+            <div class="legend-text">
+              <div class="legend-text-name">— Not applicable</div>
+              <div class="legend-text-desc">This check does not apply to this receipt type. External receipts do not carry an internal Merkle tree.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Check definitions -->
+        <div class="legend-block">
+          <div class="legend-label">Check Definitions</div>
+          <div class="legend-item">
+            <div class="legend-check-icon pass">✓</div>
+            <div class="legend-text">
+              <div class="legend-text-name">Signature</div>
+              <div class="legend-text-desc">The receipt hash was signed by the YubiHSM 2 FIPS hardware key (RSA-4096). Proves the receipt was sealed by Axeum's hardware — not software or a key that can be copied.</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-check-icon pass">✓</div>
+            <div class="legend-text">
+              <div class="legend-text-name">Hash</div>
+              <div class="legend-text-desc">SHA-256 of the canonical receipt payload matches what was stored. Any alteration to any field — even whitespace — changes the hash and breaks this check.</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-check-icon pass">✓</div>
+            <div class="legend-text">
+              <div class="legend-text-name">Events Merkle</div>
+              <div class="legend-text-desc">For internal governance receipts: the Merkle root over all workflow events matches the sealed value. Proves no events were added, removed, or reordered after signing.</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-check-icon pass">✓</div>
+            <div class="legend-text">
+              <div class="legend-text-name">Evidence Merkle</div>
+              <div class="legend-text-desc">For internal governance receipts: the Merkle root over all attached evidence files matches. Proves no supporting documents were swapped or removed.</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-check-icon pass">✓</div>
+            <div class="legend-text">
+              <div class="legend-text-name">Chain</div>
+              <div class="legend-text-desc">This receipt is linked to its predecessor by hash. The chain of custody from the first action to this one is intact and unbroken.</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-check-icon pass">✓</div>
+            <div class="legend-text">
+              <div class="legend-text-name">Bundle</div>
+              <div class="legend-text-desc">The workflow definition that governed this action was certified before execution. Proves the receipt was produced under a known, approved workflow — not an ad-hoc process.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <div class="spine-summary" id="spineSummary"></div>
     <div class="spine-tree" id="spineTree"></div>
     <div class="result-meta" id="resultMeta">
@@ -864,6 +1024,7 @@
       sealPair.classList.remove('visible');
     }
 
+    document.getElementById('legendSection').classList.toggle('visible', valid);
     box.classList.add('visible');
   }
 
@@ -889,6 +1050,7 @@
       `Encoding: ${data.encoding || 'base64-pem'} · Algorithm: RSASSA-PSS SHA-256 · Key: ${data.key_id || ''}`;
     document.getElementById('sealBtn').classList.remove('visible');
     document.getElementById('sealPair').classList.remove('visible');
+    document.getElementById('legendSection').classList.remove('visible');
     box.classList.add('visible');
   }
 
@@ -903,6 +1065,7 @@
     document.getElementById('resultMetaText').textContent = '';
     document.getElementById('sealBtn').classList.remove('visible');
     document.getElementById('sealPair').classList.remove('visible');
+    document.getElementById('legendSection').classList.remove('visible');
     box.classList.add('visible');
   }
 
@@ -916,7 +1079,7 @@
       const data = await res.json();
       showLoading(false);
       if (res.ok) showResult(data, raw);
-      else showError(data.error || `Error ${res.status}`);
+      else showError(res.status === 404 ? 'Receipt not found — this ID is not in the axeumOS registry.' : (data.error || `Error ${res.status}`));
     } catch (e) {
       showLoading(false);
       showError('Network error — could not reach axeumOS');
@@ -932,7 +1095,7 @@
       const data = await res.json();
       showLoading(false);
       if (res.ok) showResult(data, id);
-      else showError(data.error || `Error ${res.status}`);
+      else showError(res.status === 404 ? 'Receipt not found — this ID is not in the axeumOS registry.' : (data.error || `Error ${res.status}`));
     } catch (e) {
       showLoading(false);
       showError('Network error — could not reach axeumOS');
@@ -946,7 +1109,7 @@
       const data = await res.json();
       showLoading(false);
       if (res.ok) showKeyResult(data);
-      else showError(data.error || `Error ${res.status}`);
+      else showError(res.status === 404 ? 'Receipt not found — this ID is not in the axeumOS registry.' : (data.error || `Error ${res.status}`));
     } catch (e) {
       showLoading(false);
       showError('Network error — could not reach axeumOS');
@@ -1001,7 +1164,7 @@
       // A 404 (unknown root) still returns the structured verdict — render it,
       // don't collapse it to a generic error.
       if (data && typeof data.valid === 'boolean') showSpineResult(data, root);
-      else showError(data.error || `Error ${res.status}`);
+      else showError(res.status === 404 ? 'Receipt not found — this ID is not in the axeumOS registry.' : (data.error || `Error ${res.status}`));
     } catch (e) {
       showLoading(false);
       showError('Network error — could not reach axeumOS');
@@ -1039,6 +1202,7 @@
     grid.innerHTML = '';
     document.getElementById('sealBtn').classList.remove('visible');
     document.getElementById('sealPair').classList.remove('visible');
+    document.getElementById('legendSection').classList.remove('visible');
 
     // Summary: the visit chain, receipt count, and the root that was submitted.
     if (data.chain_id || receipts.length || spineRoot) {
