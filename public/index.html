@@ -374,14 +374,21 @@
       align-items: flex-start;
     }
 
+    /* QR sizing is a scannability constraint, not a style choice.
+       The payload is a version-4 symbol: 33 modules + 2 quiet = 37 across.
+       Box 80 - 4 padding - 2 border = 74 content = exactly 2px per module,
+       an integer scale, so module edges stay hard instead of blurring.
+       The padding background MUST be the QR's light colour: it was #111,
+       which put a dark ring inside the quiet zone and is precisely what
+       stops a phone camera locking on. */
     .seal-inline-qr {
-      width: 60px;
-      height: 60px;
+      width: 80px;
+      height: 80px;
       flex-shrink: 0;
       display: block;
       border: 1px solid rgba(196,154,108,0.15);
       padding: 2px;
-      background: #111;
+      background: #FAF8F5;
     }
 
     .seal-inline.light .seal-inline-qr { background: #fff; }
@@ -884,10 +891,15 @@
       document.getElementById('sealIdLight').textContent = rid;
       // A QR must be dark-modules-on-light to scan reliably; margin >=2 is the quiet zone.
       // (Copper-on-black is inverted + low-contrast and most phone cameras won't read it.)
+      // Render the BITMAP at 296px = 37 modules x 8px, then let CSS show it at
+      // 74px of content. Rendering at display size gave a 60px bitmap squeezed
+      // into a 54px box — a fractional downscale that softens every module edge.
+      // Oversampling at an exact multiple keeps it sharp, and on a retina phone
+      // the browser has real pixels to use instead of inventing them.
       QRCode.toCanvas(document.getElementById('sealQrDark'), verifyUrl,
-        { width: 60, margin: 2, color: { dark: '#1A1A1A', light: '#FAF8F5' } });
+        { width: 296, margin: 2, color: { dark: '#1A1A1A', light: '#FAF8F5' } });
       QRCode.toCanvas(document.getElementById('sealQrLight'), verifyUrl,
-        { width: 60, margin: 2, color: { dark: '#1A1A1A', light: '#ffffff' } });
+        { width: 296, margin: 2, color: { dark: '#1A1A1A', light: '#ffffff' } });
       sealPair.classList.add('visible');
     } else {
       sealBtn.classList.remove('visible');

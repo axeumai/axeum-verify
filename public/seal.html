@@ -103,16 +103,20 @@
     }
 
     /* QR code */
+    /* See index.html: 33 modules + 2 quiet = 37 across. Box 82 - 6 padding
+       - 2 border = 74 content = exactly 2px per module, an integer scale.
+       .qr-dark was #111, putting a dark ring inside the quiet zone — the
+       single most common reason a phone camera will not lock onto a code. */
     .qr-img {
-      width: 72px;
-      height: 72px;
+      width: 82px;
+      height: 82px;
       flex-shrink: 0;
       border: 1px solid rgba(196,154,108,0.2);
       padding: 3px;
       display: block;
     }
 
-    .qr-dark  { background: #111; }
+    .qr-dark  { background: #FAF8F5; }
     .qr-light { background: #fff; }
 
     .seal-text {
@@ -309,10 +313,14 @@
 
   // QR codes — rendered locally via bundled library, no third-party requests.
   // Must be dark-modules-on-light to scan reliably; margin >=2 is the quiet zone.
+  // Bitmap oversampled to 296px (37 modules x 8px) and displayed at 74px of
+  // content — an exact 4x, so module edges stay hard. A 72px bitmap shown in a
+  // 64px box was a fractional downscale, which blurs the finder patterns a
+  // camera needs most.
   QRCode.toCanvas(document.getElementById('qrCanvas'), verifyUrl,
-    { width: 72, margin: 2, color: { dark: '#1A1A1A', light: '#FAF8F5' } });
+    { width: 296, margin: 2, color: { dark: '#1A1A1A', light: '#FAF8F5' } });
   QRCode.toCanvas(document.getElementById('qrCanvasLight'), verifyUrl,
-    { width: 72, margin: 2, color: { dark: '#1A1A1A', light: '#ffffff' } });
+    { width: 296, margin: 2, color: { dark: '#1A1A1A', light: '#ffffff' } });
 
   // The check count MUST come from a live verification, never from static text.
   // This page previously printed "6/6 checks" for every receipt it was ever
