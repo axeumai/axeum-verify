@@ -317,10 +317,17 @@
   // content — an exact 4x, so module edges stay hard. A 72px bitmap shown in a
   // 64px box was a fractional downscale, which blurs the finder patterns a
   // camera needs most.
-  QRCode.toCanvas(document.getElementById('qrCanvas'), verifyUrl,
-    { width: 296, margin: 2, color: { dark: '#1A1A1A', light: '#FAF8F5' } });
-  QRCode.toCanvas(document.getElementById('qrCanvasLight'), verifyUrl,
-    { width: 296, margin: 2, color: { dark: '#1A1A1A', light: '#ffffff' } });
+  // toCanvas writes inline style.width/height at the BITMAP size, and an inline
+  // style beats the class rule — without this reset the seal renders a 296px QR.
+  // Bitmap stays 296 for sharpness; the element is pinned to its 82px box.
+  const drawQr = (elId, light) => {
+    const el = document.getElementById(elId);
+    QRCode.toCanvas(el, verifyUrl,
+      { width: 296, margin: 2, color: { dark: '#1A1A1A', light } },
+      () => { el.style.width = '82px'; el.style.height = '82px'; });
+  };
+  drawQr('qrCanvas', '#FAF8F5');
+  drawQr('qrCanvasLight', '#ffffff');
 
   // The check count MUST come from a live verification, never from static text.
   // This page previously printed "6/6 checks" for every receipt it was ever

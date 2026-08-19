@@ -896,10 +896,18 @@
       // into a 54px box — a fractional downscale that softens every module edge.
       // Oversampling at an exact multiple keeps it sharp, and on a retina phone
       // the browser has real pixels to use instead of inventing them.
-      QRCode.toCanvas(document.getElementById('sealQrDark'), verifyUrl,
-        { width: 296, margin: 2, color: { dark: '#1A1A1A', light: '#FAF8F5' } });
-      QRCode.toCanvas(document.getElementById('sealQrLight'), verifyUrl,
-        { width: 296, margin: 2, color: { dark: '#1A1A1A', light: '#ffffff' } });
+      // toCanvas writes inline style.width/height at the BITMAP size, and an
+      // inline style beats the class rule — so oversampling without this reset
+      // renders a 296px QR and blows the seal card apart. Bitmap stays 296 for
+      // sharpness; the element is pinned back to its 80px display box.
+      const drawQr = (elId, light) => {
+        const el = document.getElementById(elId);
+        QRCode.toCanvas(el, verifyUrl,
+          { width: 296, margin: 2, color: { dark: '#1A1A1A', light } },
+          () => { el.style.width = '80px'; el.style.height = '80px'; });
+      };
+      drawQr('sealQrDark', '#FAF8F5');
+      drawQr('sealQrLight', '#ffffff');
       sealPair.classList.add('visible');
     } else {
       sealBtn.classList.remove('visible');
