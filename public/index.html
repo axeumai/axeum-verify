@@ -776,14 +776,14 @@
   <a class="option-card" href="#" onclick="runDemo(); return false;">
     <div class="option-num">01 &nbsp;·&nbsp; Live Proof</div>
     <div class="option-title">Verify a<br>Production Receipt</div>
-    <div class="option-desc">A real receipt from axeumOS production. Signed by hardware. Verifiable right now.</div>
+    <div class="option-desc">A receipt compiled and signed by axeumOS. Hardware-signed on the HSM. Verifiable right now.</div>
     <div class="option-url">verify.axeumai.com/RCP-2026-166684</div>
   </a>
 
   <a class="option-card" href="#" onclick="document.getElementById('receiptInput').focus(); return false;">
     <div class="option-num">02 &nbsp;·&nbsp; Any Receipt</div>
     <div class="option-title">Enter Any<br>Receipt ID</div>
-    <div class="option-desc">Paste any receipt ID from any Axeum pillar. 6 cryptographic checks run in real time.</div>
+    <div class="option-desc">Paste any receipt ID from any Axeum pillar. Up to 6 cryptographic checks run in real time — every one that applies to that receipt.</div>
     <div class="option-url">verify.axeumai.com/{receipt_id}</div>
   </a>
 
@@ -907,7 +907,7 @@
           <span class="seal-inline-brand">Axeum Technologies</span>
           <div class="seal-inline-checks">
             <div class="seal-inline-dot"></div>
-            <span>6/6 &nbsp;·&nbsp; RSA-4096</span>
+            <span id="sealChecksDark"></span>
           </div>
         </div>
       </div>
@@ -926,7 +926,7 @@
           <span class="seal-inline-brand">Axeum Technologies</span>
           <div class="seal-inline-checks">
             <div class="seal-inline-dot"></div>
-            <span>6/6 &nbsp;·&nbsp; RSA-4096</span>
+            <span id="sealChecksLight"></span>
           </div>
         </div>
       </div>
@@ -980,8 +980,34 @@
     const valid = data.valid === true;
     box.className = 'result-box visible' + (valid ? '' : ' error');
     dot.className = 'result-dot' + (valid ? '' : ' fail');
-    status.textContent = valid ? 'Verified — all checks passed' : 'Verification failed';
+
+    // Count what was ACTUALLY run. A null check is "not applicable" — it was
+    // never performed — and must never be counted as passed. The seal and the
+    // headline both read from this, because a summary that overstates the
+    // verification is the one defect this page cannot afford: it is the exact
+    // tautology the verifier itself was fixed to stop reporting (v1.2.48).
+    const checkVals = Object.keys(CHECK_LABELS).map(k => (data.checks || {})[k]);
+    const total     = checkVals.length;
+    const performed = checkVals.filter(v => v !== null && v !== undefined).length;
+    const passed    = checkVals.filter(v => v === true).length;
+
+    status.textContent = valid
+      ? (performed === total
+          ? 'Verified — all checks passed'
+          : 'Verified — all applicable checks passed')
+      : 'Verification failed';
     idEl.textContent = receiptId || data.receipt_id || '';
+
+    // Seal badge: passed / performed, never passed / total. Labelled
+    // "applicable" so a compact "3/3" cannot be misread as "only 3 checks
+    // exist", and so it never implies the 3 unrun checks were satisfied.
+    const sealChecks = performed === total
+      ? `${passed}/${total} checks`
+      : `${passed}/${performed} applicable`;
+    const sealDarkEl  = document.getElementById('sealChecksDark');
+    const sealLightEl = document.getElementById('sealChecksLight');
+    if (sealDarkEl)  sealDarkEl.innerHTML  = `${sealChecks} &nbsp;·&nbsp; RSA-4096`;
+    if (sealLightEl) sealLightEl.innerHTML = `${sealChecks} &nbsp;·&nbsp; RSA-4096`;
 
     // Checks
     const checks = data.checks || {};
@@ -996,7 +1022,8 @@
     // Meta
     const parts = [];
     if (data.verified_at) parts.push(`Verified ${new Date(data.verified_at).toUTCString()}`);
-    if (data.checks_performed) parts.push(`${data.checks_performed} checks`);
+    // "3 checks" alone read as though 3 of 6 had failed. State the denominator.
+    if (performed) parts.push(`${performed} of ${total} checks applicable`);
     if (data.workflow_root_id) parts.push(`Workflow ${data.workflow_root_id}`);
     document.getElementById('resultMetaText').textContent = parts.join(' · ');
 

@@ -266,7 +266,7 @@
     <span class="seal-brand">Axeum Technologies</span>
     <div class="seal-checks">
       <div class="check-dot"></div>
-      <span class="checks-label">6/6 checks &nbsp;·&nbsp; RSA-4096</span>
+      <span class="checks-label" id="checksLabelDark">verifying…</span>
     </div>
   </div>
 </div>
@@ -289,7 +289,7 @@
     <span class="seal-brand">Axeum Technologies</span>
     <div class="seal-checks">
       <div class="check-dot"></div>
-      <span class="checks-label">6/6 checks &nbsp;·&nbsp; RSA-4096</span>
+      <span class="checks-label" id="checksLabelLight">verifying…</span>
     </div>
   </div>
 </div>
@@ -313,6 +313,49 @@
     { width: 72, margin: 2, color: { dark: '#1A1A1A', light: '#FAF8F5' } });
   QRCode.toCanvas(document.getElementById('qrCanvasLight'), verifyUrl,
     { width: 72, margin: 2, color: { dark: '#1A1A1A', light: '#ffffff' } });
+
+  // The check count MUST come from a live verification, never from static text.
+  // This page previously printed "6/6 checks" for every receipt it was ever
+  // handed — including unsigned and failing ones — because it never called the
+  // API at all. A cover seal is the artifact that travels ON a document to a
+  // payer or a court, so a hardcoded count is a false cryptographic claim on a
+  // record of record. It now states only what verification actually returned.
+  const CHECK_KEYS = [
+    'signature_valid', 'hash_matches', 'events_merkle_valid',
+    'evidence_merkle_valid', 'chain_valid', 'bundle_valid',
+  ];
+
+  function renderChecks(text) {
+    for (const id of ['checksLabelDark', 'checksLabelLight']) {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = text;
+    }
+  }
+
+  fetch(`https://api.os.axeumai.com/api/public/verify/${encodeURIComponent(receiptId)}`)
+    .then(r => r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))
+    .then(data => {
+      const vals      = CHECK_KEYS.map(k => (data.checks || {})[k]);
+      const total     = vals.length;
+      // null === "not applicable to this receipt", and is never a pass.
+      const performed = vals.filter(v => v !== null && v !== undefined).length;
+      const passed    = vals.filter(v => v === true).length;
+
+      if (data.valid !== true) {
+        renderChecks(`${passed}/${performed} checks &nbsp;·&nbsp; NOT VERIFIED`);
+        for (const c of document.querySelectorAll('.check-dot')) c.style.background = '#8B3A3A';
+        return;
+      }
+      renderChecks(performed === total
+        ? `${passed}/${total} checks &nbsp;·&nbsp; RSA-4096`
+        : `${passed}/${performed} applicable &nbsp;·&nbsp; RSA-4096`);
+    })
+    .catch(() => {
+      // An unreachable verifier is a hold, not a pass — never fall back to a
+      // count we did not obtain.
+      renderChecks('verification unavailable');
+      for (const c of document.querySelectorAll('.check-dot')) c.style.background = '#D4A04A';
+    });
 </script>
 
 </body>
