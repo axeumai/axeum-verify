@@ -763,7 +763,7 @@
       class="search-input"
       id="receiptInput"
       type="text"
-      placeholder="Enter receipt ID — e.g. RCP-2026-166684"
+      placeholder="Enter receipt ID — e.g. RCP-mt05uoxo-6340c2af44b9f5ed"
       autocomplete="off"
       spellcheck="false"
     />
@@ -776,8 +776,8 @@
   <a class="option-card" href="#" onclick="runDemo(); return false;">
     <div class="option-num">01 &nbsp;·&nbsp; Live Proof</div>
     <div class="option-title">Verify a<br>Production Receipt</div>
-    <div class="option-desc">A receipt compiled and signed by axeumOS. Hardware-signed on the HSM. Verifiable right now.</div>
-    <div class="option-url">verify.axeumai.com/RCP-2026-166684</div>
+    <div class="option-desc">A real receipt from axeumOS production. Hardware-signed on the HSM. Verifiable right now.</div>
+    <div class="option-url">verify.axeumai.com/RCP-mt05uoxo-6340c2af44b9f5ed</div>
   </a>
 
   <a class="option-card" href="#" onclick="document.getElementById('receiptInput').focus(); return false;">
@@ -1114,7 +1114,7 @@
   }
 
   async function runDemo() {
-    const id = 'RCP-2026-166684';
+    const id = 'RCP-mt05uoxo-6340c2af44b9f5ed';
     document.getElementById('receiptInput').value = id;
     showLoading(true);
     try {
@@ -1154,7 +1154,7 @@
     const input = document.getElementById('receiptInput');
     input.placeholder = m === 'claim'
       ? 'Paste the spine root from a claim — e.g. sha256:130d984b…'
-      : 'Enter receipt ID — e.g. RCP-2026-166684';
+      : 'Enter receipt ID — e.g. RCP-mt05uoxo-6340c2af44b9f5ed';
     input.focus();
   }
 
