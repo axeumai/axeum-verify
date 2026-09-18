@@ -733,7 +733,7 @@
 </header>
 
 <section class="hero">
-  <div class="hero-date" id="heroDate">March 28, 2026</div>
+  <div class="hero-date" id="heroDate"></div>
   <div class="hero-eyebrow">Independent Verification</div>
   <h1 class="hero-title">Verify <span id="heroWord" class="mark">EXECUTION RECEIPTS&trade;</span>.<br>No account required.</h1>
   <p class="hero-sub">Hardware-signed &nbsp;·&nbsp; RSA-4096 &nbsp;·&nbsp; FIPS 140-2 &nbsp;·&nbsp; FRE 902(14) self-authenticating</p>
@@ -849,23 +849,27 @@
   // A real, fully-attested visit spine (5 receipts) — live proof of the claim path.
   const DEMO_SPINE = 'sha256:130d984b50977b19941164d957c5a9c692af930caf8e8045a9f52d3eb0159f59';
   /* ── Dated line under the header ──────────────────────────────────────────
-     PINNED, on CEO instruction 2026-09-18, for a trademark-specimen capture.
+     LIVE. Renders today's date in America/New_York on every load.
 
-     To switch to the live date: set PINNED_DATE to null. Nothing else changes —
-     the renderer below already does both, so the change is one word and needs no
-     new code written under time pressure later.
+     It was pinned to 'March 28, 2026' between d252d67 and this commit, for a
+     trademark-specimen capture on CEO instruction. Unpinned 2026-09-18 once the
+     screenshot was taken, which is the whole reason it was built as a switch.
 
-     Kept as an explicit constant rather than hand-edited HTML so the page always
-     states which mode it is in, and so a pinned date can never be mistaken for a
-     date the page computed. */
-  const PINNED_DATE = 'March 28, 2026';
+     To pin it again: put a date string here. Nothing else changes. Do clear the
+     #heroDate element's text at the same time if you pin it — the element is
+     empty now precisely so a stale literal cannot outlive a pin for a reader
+     with scripts blocked.
+
+     A pinned date on a page that is being photographed is a claim about time.
+     This surface exists to be believed about time, so it does not make that
+     claim casually: `data-source` says which mode produced the value. */
+  const PINNED_DATE = null;
 
   function renderHeroDate() {
     const el = document.getElementById('heroDate');
     if (!el) { console.warn('heroDate element missing — the dated line is whatever the HTML says'); return; }
-    // NOTE when switching to live: the HTML carries 'March 28, 2026' as a
-    // no-JS fallback. Clear that literal at the same time you null PINNED_DATE,
-    // or a reader with scripts blocked keeps seeing the pinned date forever.
+    // The element ships empty: with scripts blocked the line is absent rather
+    // than wrong, which is the right failure for a date on this page.
     el.textContent = PINNED_DATE || new Date().toLocaleDateString('en-US', {
       year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/New_York',
     });
