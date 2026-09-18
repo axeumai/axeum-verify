@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Receipt Verification — Axeum Technologies</title>
+  <title>Execution Receipt™ Verification — Axeum Technologies</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -88,7 +88,13 @@
       margin-bottom: 16px;
     }
 
-    .hero-title span { color: var(--copper); }
+    .hero-title span {
+      color: var(--copper);
+      /* The mark must never break across lines — a specimen showing
+         "Execution" on one line and "Receipt™" on the next is a weaker
+         showing of the mark as a single unit. */
+      white-space: nowrap;
+    }
 
     .hero-sub {
       font-size: 14px;
@@ -661,7 +667,7 @@
     @media (max-width: 768px) {
       header { padding: 20px 24px; }
       .hero { padding: 48px 24px 40px; }
-      .hero-title { font-size: 36px; }
+      .hero-title { font-size: 30px; }   /* holds 'Execution Receipt™.' unbroken at 375px */
       .options { grid-template-columns: 1fr; }
       .result-wrap { padding: 0 24px; }
       .checks-grid { grid-template-columns: repeat(2, 1fr); }
@@ -681,10 +687,10 @@
 
 <section class="hero">
   <div class="hero-eyebrow">Independent Verification</div>
-  <h1 class="hero-title">Verify any <span id="heroWord">receipt.</span><br>No account required.</h1>
+  <h1 class="hero-title">Verify any <span id="heroWord">Execution Receipt&trade;.</span><br>No account required.</h1>
   <p class="hero-sub">Hardware-signed &nbsp;·&nbsp; RSA-4096 &nbsp;·&nbsp; FIPS 140-2 &nbsp;·&nbsp; FRE 902(14) self-authenticating</p>
   <div class="mode-toggle">
-    <button type="button" class="mode-btn active" id="modeReceipt" onclick="setMode('receipt')">Receipt</button>
+    <button type="button" class="mode-btn active" id="modeReceipt" onclick="setMode('receipt')">Execution Receipt</button>
     <button type="button" class="mode-btn" id="modeClaim" onclick="setMode('claim')">Claim &nbsp;·&nbsp; Visit Spine</button>
   </div>
   <div class="search-wrap">
@@ -692,7 +698,7 @@
       class="search-input"
       id="receiptInput"
       type="text"
-      placeholder="Enter receipt ID — e.g. RCP-mt05uoxo-6340c2af44b9f5ed"
+      placeholder="Enter Execution Receipt ID — e.g. RCP-mt05uoxo-6340c2af44b9f5ed"
       autocomplete="off"
       spellcheck="false"
     />
@@ -705,21 +711,21 @@
   <a class="option-card" href="#" onclick="runDemo(); return false;">
     <div class="option-num">01 &nbsp;·&nbsp; Live Proof</div>
     <div class="option-title">Verify a<br>Production Receipt</div>
-    <div class="option-desc">A real receipt from axeumOS production. Hardware-signed on the HSM. Verifiable right now.</div>
+    <div class="option-desc">A real Execution Receipt from axeumOS production. Hardware-signed on the HSM. Verifiable right now.</div>
     <div class="option-url">verify.axeumai.com/RCP-mt05uoxo-6340c2af44b9f5ed</div>
   </a>
 
   <a class="option-card" href="#" onclick="document.getElementById('receiptInput').focus(); return false;">
     <div class="option-num">02 &nbsp;·&nbsp; Any Receipt</div>
     <div class="option-title">Enter Any<br>Receipt ID</div>
-    <div class="option-desc">Paste any receipt ID from any Axeum pillar. Up to 6 cryptographic checks run in real time — every one that applies to that receipt.</div>
+    <div class="option-desc">Paste any Execution Receipt ID from any Axeum pillar. Up to 6 cryptographic checks run in real time — every one that applies to that receipt.</div>
     <div class="option-url">verify.axeumai.com/{receipt_id}</div>
   </a>
 
   <a class="option-card" href="#" onclick="fetchPublicKey(); return false;">
     <div class="option-num">03 &nbsp;·&nbsp; Public Key</div>
     <div class="option-title">RSA-4096<br>Signing Key</div>
-    <div class="option-desc">The hardware signing key. Verify any receipt signature offline using standard tools.</div>
+    <div class="option-desc">The hardware signing key. Verify any Execution Receipt signature offline using standard tools.</div>
     <div class="option-url">verify.axeumai.com/key/yubihsm-0x4afb</div>
   </a>
 </div>
@@ -1009,12 +1015,12 @@
     mode = m;
     document.getElementById('modeReceipt').classList.toggle('active', m === 'receipt');
     document.getElementById('modeClaim').classList.toggle('active', m === 'claim');
-    document.getElementById('heroWord').textContent = m === 'claim' ? 'claim.' : 'receipt.';
+    document.getElementById('heroWord').textContent = m === 'claim' ? 'claim.' : 'Execution Receipt™.';
     document.getElementById('claimDemo').classList.toggle('visible', m === 'claim');
     const input = document.getElementById('receiptInput');
     input.placeholder = m === 'claim'
       ? 'Paste the spine root from a claim — e.g. sha256:130d984b…'
-      : 'Enter receipt ID — e.g. RCP-mt05uoxo-6340c2af44b9f5ed';
+      : 'Enter Execution Receipt ID — e.g. RCP-mt05uoxo-6340c2af44b9f5ed';
     input.focus();
   }
 
