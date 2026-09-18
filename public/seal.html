@@ -164,11 +164,20 @@
 
     .seal-brand {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 10px;
-      font-weight: 300;
-      letter-spacing: 0.2em;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: rgba(196,154,108,0.5);
+      color: rgba(196,154,108,0.8);
+    }
+
+    /* Trademark symbol — letter-spacing reset to 0 so the symbol stays attached
+       to the mark instead of drifting off it under the inherited tracking. */
+    .tm {
+      font-size: 0.5em;
+      vertical-align: super;
+      letter-spacing: 0;
+      font-weight: 700;
     }
 
     .seal-checks {
@@ -223,7 +232,7 @@
     .seal-light .seal-receipt-id { color: var(--copper); }
     .seal-light .seal-verify { color: rgba(26,26,26,0.35); }
     .seal-light .seal-divider { background: rgba(196,154,108,0.2); }
-    .seal-light .seal-brand { color: rgba(196,154,108,0.6); }
+    .seal-light .seal-brand { color: rgba(196,154,108,0.9); }
 
     /* qrCanvasLight removed — using .qr-img class for both */
 
@@ -256,7 +265,7 @@
 
 <!-- Dark seal -->
 <div class="seal" id="sealDark">
-  <div class="seal-eyebrow">Cover Seal &nbsp;·&nbsp; Receipt of Record</div>
+  <div class="seal-eyebrow">Cover Seal &nbsp;·&nbsp; REGISTRY OF RECORD<span class="tm">&trade;</span></div>
   <div class="seal-body">
     <canvas id="qrCanvas" class="qr-img qr-dark"></canvas>
     <div class="seal-text">
@@ -267,7 +276,7 @@
   </div>
   <div class="seal-divider"></div>
   <div class="seal-footer">
-    <span class="seal-brand">Axeum Technologies</span>
+    <span class="seal-brand">AXEUM<span class="tm">&trade;</span></span>
     <div class="seal-checks">
       <div class="check-dot"></div>
       <span class="checks-label" id="checksLabelDark">verifying…</span>
@@ -279,7 +288,7 @@
 
 <!-- Light seal -->
 <div class="seal-light" id="sealLight">
-  <div class="seal-eyebrow">Cover Seal &nbsp;·&nbsp; Receipt of Record</div>
+  <div class="seal-eyebrow">Cover Seal &nbsp;·&nbsp; REGISTRY OF RECORD<span class="tm">&trade;</span></div>
   <div class="seal-body">
     <canvas id="qrCanvasLight" class="qr-img qr-light"></canvas>
     <div class="seal-text">
@@ -290,7 +299,7 @@
   </div>
   <div class="seal-divider"></div>
   <div class="seal-footer">
-    <span class="seal-brand">Axeum Technologies</span>
+    <span class="seal-brand">AXEUM<span class="tm">&trade;</span></span>
     <div class="seal-checks">
       <div class="check-dot"></div>
       <span class="checks-label" id="checksLabelLight">verifying…</span>

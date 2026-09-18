@@ -73,10 +73,10 @@
       font-size: 13px;
       font-weight: 700;
       letter-spacing: 0.14em;
-      /* text-transform removed deliberately: the mark is written "REGISTRY of
-         RECORD", and a CSS transform would render it "REGISTRY OF RECORD" —
-         different from the wording asked for, and the DOM text would not match
-         what is photographed. Caps are literal below. */
+      /* No text-transform. The mark is fully capitalised — "REGISTRY OF
+         RECORD", CEO revision 2026-09-18 — and the caps are written as literal
+         characters in the markup rather than painted on by CSS, so the DOM text
+         matches what is photographed and what a reader copies off the page. */
       color: var(--copper);
     }
 
@@ -470,11 +470,12 @@
 
     .seal-inline-brand {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 9px;
-      font-weight: 300;
-      letter-spacing: 0.18em;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: rgba(196,154,108,0.45);
+      /* 0.45 alpha was fine for a courtesy byline; this is a mark now. */
+      color: rgba(196,154,108,0.75);
     }
 
     .seal-inline-checks {
@@ -728,7 +729,7 @@
 
 <header>
   <a href="/" class="brand">AXEUM<span class="tm">&trade;</span></a>
-  <span class="header-tag">REGISTRY of RECORD<span class="tm">&trade;</span> &nbsp;·&nbsp; PUBLIC VERIFICATION</span>
+  <span class="header-tag">REGISTRY OF RECORD<span class="tm">&trade;</span> &nbsp;·&nbsp; PUBLIC VERIFICATION</span>
 </header>
 
 <section class="hero">
@@ -797,7 +798,7 @@
     <div class="seal-pair" id="sealPair">
       <!-- Dark seal -->
       <div class="seal-inline" id="sealDark">
-        <div class="seal-inline-eyebrow">Cover Seal &nbsp;·&nbsp; Receipt of Record</div>
+        <div class="seal-inline-eyebrow">Cover Seal &nbsp;·&nbsp; REGISTRY OF RECORD<span class="tm">&trade;</span></div>
         <div class="seal-inline-body">
           <canvas id="sealQrDark" class="seal-inline-qr"></canvas>
           <div class="seal-inline-text">
@@ -807,7 +808,7 @@
           </div>
         </div>
         <div class="seal-inline-footer">
-          <span class="seal-inline-brand">Axeum Technologies</span>
+          <span class="seal-inline-brand">AXEUM<span class="tm">&trade;</span></span>
           <div class="seal-inline-checks">
             <div class="seal-inline-dot"></div>
             <span id="sealChecksDark"></span>
@@ -816,7 +817,7 @@
       </div>
       <!-- Light seal -->
       <div class="seal-inline light" id="sealLight">
-        <div class="seal-inline-eyebrow">Cover Seal &nbsp;·&nbsp; Receipt of Record</div>
+        <div class="seal-inline-eyebrow">Cover Seal &nbsp;·&nbsp; REGISTRY OF RECORD<span class="tm">&trade;</span></div>
         <div class="seal-inline-body">
           <canvas id="sealQrLight" class="seal-inline-qr"></canvas>
           <div class="seal-inline-text">
@@ -826,7 +827,7 @@
           </div>
         </div>
         <div class="seal-inline-footer">
-          <span class="seal-inline-brand">Axeum Technologies</span>
+          <span class="seal-inline-brand">AXEUM<span class="tm">&trade;</span></span>
           <div class="seal-inline-checks">
             <div class="seal-inline-dot"></div>
             <span id="sealChecksLight"></span>
@@ -838,7 +839,7 @@
 </div>
 
 <footer>
-  <span class="footer-text"><span class="footer-brand">AXEUM<span class="tm">&trade;</span></span> &nbsp;·&nbsp; REGISTRY of RECORD<span class="tm">&trade;</span></span>
+  <span class="footer-text"><span class="footer-brand">AXEUM<span class="tm">&trade;</span></span> &nbsp;·&nbsp; REGISTRY OF RECORD<span class="tm">&trade;</span></span>
   <span class="footer-mono">RSASSA-PSS &nbsp;·&nbsp; SHA-256 &nbsp;·&nbsp; RFC 3161 TSA &nbsp;·&nbsp; FRE 902(14)</span>
 </footer>
 
