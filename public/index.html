@@ -553,9 +553,24 @@
     }
 
     .footer-text {
-      font-size: 11px;
-      color: rgba(250,248,245,0.2);
-      letter-spacing: 0.08em;
+      /* Matched to the header: the two marks read the same at both ends of the
+         page. 0.2 alpha ivory was almost invisible on a mark that is supposed to
+         be legible in a photograph — it is copper now, like the header tag. */
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: var(--copper);
+    }
+
+    /* The brand half of the footer line, in the serif face the header uses. */
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--copper);
     }
 
     .footer-mono {
@@ -823,7 +838,7 @@
 </div>
 
 <footer>
-  <span class="footer-text">Axeum Technologies &nbsp;·&nbsp; Receipt of Record</span>
+  <span class="footer-text"><span class="footer-brand">AXEUM<span class="tm">&trade;</span></span> &nbsp;·&nbsp; REGISTRY of RECORD<span class="tm">&trade;</span></span>
   <span class="footer-mono">RSASSA-PSS &nbsp;·&nbsp; SHA-256 &nbsp;·&nbsp; RFC 3161 TSA &nbsp;·&nbsp; FRE 902(14)</span>
 </footer>
 
