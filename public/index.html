@@ -47,20 +47,37 @@
 
     .brand {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 15px;
-      font-weight: 300;
-      letter-spacing: 0.28em;
+      font-size: 24px;
+      font-weight: 700;
+      /* 0.28em was tuned for 15px light caps; at 24px bold it reads as gaps,
+         not spacing. */
+      letter-spacing: 0.16em;
       text-transform: uppercase;
       color: var(--copper);
       text-decoration: none;
     }
 
+    /* Trademark symbol: legible but not competing with the mark it marks.
+       letter-spacing is reset to 0 — inherited tracking pushes the symbol off
+       the word it belongs to, which reads as a separate glyph rather than as
+       part of the mark. */
+    .tm {
+      font-size: 0.48em;
+      vertical-align: super;
+      letter-spacing: 0;
+      font-weight: 700;
+    }
+
     .header-tag {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--dim);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      /* text-transform removed deliberately: the mark is written "REGISTRY of
+         RECORD", and a CSS transform would render it "REGISTRY OF RECORD" —
+         different from the wording asked for, and the DOM text would not match
+         what is photographed. Caps are literal below. */
+      color: var(--copper);
     }
 
     /* ── Hero ── */
@@ -68,6 +85,15 @@
       text-align: center;
       padding: 72px 48px 56px;
       border-bottom: 1px solid var(--border);
+    }
+
+    .hero-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 10px;
     }
 
     .hero-eyebrow {
@@ -686,11 +712,12 @@
 <div class="top-rule"></div>
 
 <header>
-  <a href="/" class="brand">Axeum Technologies</a>
-  <span class="header-tag">Receipt of Record &nbsp;·&nbsp; Public Verification</span>
+  <a href="/" class="brand">AXEUM<span class="tm">&trade;</span></a>
+  <span class="header-tag">REGISTRY of RECORD<span class="tm">&trade;</span> &nbsp;·&nbsp; PUBLIC VERIFICATION</span>
 </header>
 
 <section class="hero">
+  <div class="hero-date" id="heroDate">March 28, 2026</div>
   <div class="hero-eyebrow">Independent Verification</div>
   <h1 class="hero-title">Verify <span id="heroWord" class="mark">EXECUTION RECEIPTS&trade;</span>.<br>No account required.</h1>
   <p class="hero-sub">Hardware-signed &nbsp;·&nbsp; RSA-4096 &nbsp;·&nbsp; FIPS 140-2 &nbsp;·&nbsp; FRE 902(14) self-authenticating</p>
@@ -805,6 +832,31 @@
   const SPINE_API = 'https://api.os.axeumai.com/api/verify/spine';
   // A real, fully-attested visit spine (5 receipts) — live proof of the claim path.
   const DEMO_SPINE = 'sha256:130d984b50977b19941164d957c5a9c692af930caf8e8045a9f52d3eb0159f59';
+  /* ── Dated line under the header ──────────────────────────────────────────
+     PINNED, on CEO instruction 2026-09-18, for a trademark-specimen capture.
+
+     To switch to the live date: set PINNED_DATE to null. Nothing else changes —
+     the renderer below already does both, so the change is one word and needs no
+     new code written under time pressure later.
+
+     Kept as an explicit constant rather than hand-edited HTML so the page always
+     states which mode it is in, and so a pinned date can never be mistaken for a
+     date the page computed. */
+  const PINNED_DATE = 'March 28, 2026';
+
+  function renderHeroDate() {
+    const el = document.getElementById('heroDate');
+    if (!el) { console.warn('heroDate element missing — the dated line is whatever the HTML says'); return; }
+    // NOTE when switching to live: the HTML carries 'March 28, 2026' as a
+    // no-JS fallback. Clear that literal at the same time you null PINNED_DATE,
+    // or a reader with scripts blocked keeps seeing the pinned date forever.
+    el.textContent = PINNED_DATE || new Date().toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/New_York',
+    });
+    el.dataset.source = PINNED_DATE ? 'pinned' : 'live';
+  }
+  renderHeroDate();
+
   let mode = 'receipt';
 
   const CHECK_LABELS = {
