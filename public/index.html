@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Execution Receipt™ Verification — Axeum Technologies</title>
+  <title>Execution Receipts™ Verification — Axeum Technologies</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -90,11 +90,15 @@
 
     .hero-title span {
       color: var(--copper);
+      font-weight: 400;
       /* The mark must never break across lines — a specimen showing
          "Execution" on one line and "Receipt™" on the next is a weaker
          showing of the mark as a single unit. */
       white-space: nowrap;
     }
+
+    /* The mark itself — all caps, genuinely bold (Cormorant 700 is loaded). */
+    .hero-title span.mark { font-weight: 700; letter-spacing: 0.01em; }
 
     .hero-sub {
       font-size: 14px;
@@ -561,6 +565,7 @@
     }
 
     .mode-btn.active { color: var(--obsidian); background: var(--copper); }
+    .mode-btn strong { font-weight: 700; }
     .mode-btn:not(.active):hover { color: var(--ivory); background: rgba(196,154,108,0.06); }
 
     .claim-demo {
@@ -667,7 +672,7 @@
     @media (max-width: 768px) {
       header { padding: 20px 24px; }
       .hero { padding: 48px 24px 40px; }
-      .hero-title { font-size: 30px; }   /* holds 'Execution Receipt™.' unbroken at 375px */
+      .hero-title { font-size: 28px; }   /* holds 'EXECUTION RECEIPTS™' unbroken at 375px */
       .options { grid-template-columns: 1fr; }
       .result-wrap { padding: 0 24px; }
       .checks-grid { grid-template-columns: repeat(2, 1fr); }
@@ -687,10 +692,10 @@
 
 <section class="hero">
   <div class="hero-eyebrow">Independent Verification</div>
-  <h1 class="hero-title">Verify any <span id="heroWord">Execution Receipt&trade;.</span><br>No account required.</h1>
+  <h1 class="hero-title">Verify <span id="heroWord" class="mark">EXECUTION RECEIPTS&trade;</span>.<br>No account required.</h1>
   <p class="hero-sub">Hardware-signed &nbsp;·&nbsp; RSA-4096 &nbsp;·&nbsp; FIPS 140-2 &nbsp;·&nbsp; FRE 902(14) self-authenticating</p>
   <div class="mode-toggle">
-    <button type="button" class="mode-btn active" id="modeReceipt" onclick="setMode('receipt')">Execution Receipt</button>
+    <button type="button" class="mode-btn active" id="modeReceipt" onclick="setMode('receipt')"><strong>EXECUTION RECEIPTS&trade;</strong></button>
     <button type="button" class="mode-btn" id="modeClaim" onclick="setMode('claim')">Claim &nbsp;·&nbsp; Visit Spine</button>
   </div>
   <div class="search-wrap">
@@ -1015,7 +1020,11 @@
     mode = m;
     document.getElementById('modeReceipt').classList.toggle('active', m === 'receipt');
     document.getElementById('modeClaim').classList.toggle('active', m === 'claim');
-    document.getElementById('heroWord').textContent = m === 'claim' ? 'claim.' : 'Execution Receipt™.';
+    const hw = document.getElementById('heroWord');
+    // Dropping "any" from the H1 means claim mode must supply its own plural,
+    // or the headline reads "Verify claim." The mark class comes off with it.
+    hw.textContent = m === 'claim' ? 'claims' : 'EXECUTION RECEIPTS™';
+    hw.classList.toggle('mark', m !== 'claim');
     document.getElementById('claimDemo').classList.toggle('visible', m === 'claim');
     const input = document.getElementById('receiptInput');
     input.placeholder = m === 'claim'
